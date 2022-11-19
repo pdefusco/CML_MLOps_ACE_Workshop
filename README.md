@@ -1,4 +1,4 @@
-# MLOps_Hands_On_Labs
+# Cloudera Machine Learning MLOps Hands On Lab
 
 ## Summary
 
