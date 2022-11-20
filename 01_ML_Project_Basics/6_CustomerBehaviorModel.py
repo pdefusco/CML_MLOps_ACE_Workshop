@@ -4,7 +4,7 @@ import cdsw
 import pandas as pd
 import pickle
 
-customer_behavior_model = pickle.load(open('final_model.sav', 'rb'))
+customer_behavior_model = pickle.load(open('/home/cdsw/01_ML_Project_Basics/models/final_model.sav', 'rb'))
 
 #Inputs:
 #recency            int64
