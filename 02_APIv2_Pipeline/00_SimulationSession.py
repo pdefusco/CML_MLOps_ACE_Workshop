@@ -7,14 +7,10 @@ import matplotlib.pyplot as plt
 from cmlbootstrap import CMLBootstrap
 import seaborn as sns
 import copy
-from pyspark.sql import SparkSession
-from pyspark.sql.types import *
 import cmlapi
 from src.api import ApiUtility
 from sklearn.metrics import classification_report
-
 from __future__ import print_function
-import time
 import cmlapi
 from cmlapi.rest import ApiException
 from pprint import pprint
@@ -65,7 +61,6 @@ def label_error(item, percent):
 df.groupby("label")["label"].count()
 #df = df.astype('str').to_dict('records')
 
-
 # Create an array of model responses.
 response_labels_sample = []
 
@@ -101,8 +96,6 @@ for record in json.loads(df.astype("str").to_json(orient="records")):
 #    },
 #    "uuid": "7e3b3373-4487-4788-8b63-0ef8d9e9fa5c"
 #}
-    
-    
     
 # The "ground truth" loop adds the updated actual label value and an accuracy measure
 # every 100 calls to the model.
