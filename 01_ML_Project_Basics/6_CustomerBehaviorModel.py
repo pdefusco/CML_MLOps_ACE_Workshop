@@ -1,6 +1,6 @@
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.pipeline import Pipeline
-
+import cdsw
 import pandas as pd
 import pickle
 
@@ -17,7 +17,7 @@ customer_behavior_model = pickle.load(open('final_model.sav', 'rb'))
 
 #Target:
 #conversion         int64
-  
+@cdsw.model_metrics
 def predict(data):
     
     df = pd.DataFrame(data, index=[0])
@@ -29,6 +29,9 @@ def predict(data):
     df['used_discount'] = df['used_discount'].astype(float)
     df['used_bogo'] = df['used_bogo'].astype(float)
     df['is_referral'] = df['is_referral'].astype(float)
+    
+    cdsw.track_metric("input_data", dict(df))
+    cdsw.track_metric("prediction", customer_behavior_model.predict(df)[0])
     
     return {'result': customer_behavior_model.predict(df)[0]}
 
