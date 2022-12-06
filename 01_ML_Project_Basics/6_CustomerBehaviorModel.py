@@ -33,7 +33,7 @@ def predict(data):
     cdsw.track_metric("input_data", dict(df))
     cdsw.track_metric("prediction", customer_behavior_model.predict(df)[0])
     
-    return {'result': customer_behavior_model.predict(df)[0]}
+    return {'result': customer_behavior_model.predict(df)[0].to_json()}
 
 #{
 #  "recency": “6”,
