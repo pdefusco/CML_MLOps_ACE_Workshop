@@ -20,13 +20,9 @@ customer_behavior_model = pickle.load(open('/home/cdsw/01_ML_Project_Basics/mode
 @cdsw.model_metrics
 def predict(data):
     df = pd.DataFrame(data, index=[0])
-
     #df.columns = ['recency', 'history', 'used_discount', 'used_bogo', 'is_referral', 'channel', 'offer']
-
     print(df.columns)
-
     print(df.head())
-
     df['recency'] = df['recency'].astype(float)
     df['history'] = df['history'].astype(float)
     df['used_discount'] = df['used_discount'].astype(float)
@@ -41,8 +37,8 @@ def predict(data):
 
     return {'result': pred}
 
-  Web  329.08             1  No Offer           6       1     1
-recency history used_discount used_bogo is_referral channel offer
+#  Web  329.08             1  No Offer           6       1     1
+#recency history used_discount used_bogo is_referral channel offer
 
 #{
 #  "recency": “6”,
