@@ -20,19 +20,19 @@ customer_behavior_model = pickle.load(open('/home/cdsw/01_ML_Project_Basics/mode
 @cdsw.model_metrics
 def predict(data):
     df = pd.DataFrame(data, index=[0])
-    
+
     df.columns = ['recency', 'history', 'used_discount', 'used_bogo', 'is_referral', 'channel', 'offer']
-    
+
     df['recency'] = df['recency'].astype(float)
     df['history'] = df['history'].astype(float)
     df['used_discount'] = df['used_discount'].astype(float)
     df['used_bogo'] = df['used_bogo'].astype(float)
     df['is_referral'] = df['is_referral'].astype(float)
-    
+
     cdsw.track_metric("input_data", dict(df))
-    cdsw.track_metric("prediction", customer_behavior_model.predict(df)[0])
-    
-    return {'result': customer_behavior_model.predict(df)[0]}
+    cdsw.track_metric("prediction", customer_behavior_model.predict(df))
+
+    return {'result': customer_behavior_model.predict(df)}
 
 #{
 #  "recency": “6”,
