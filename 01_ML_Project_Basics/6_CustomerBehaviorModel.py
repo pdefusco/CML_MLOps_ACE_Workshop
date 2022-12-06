@@ -23,6 +23,8 @@ def predict(data):
 
     df.columns = ['recency', 'history', 'used_discount', 'used_bogo', 'is_referral', 'channel', 'offer']
 
+    print(df.columns)
+
     print(df.head())
 
     df['recency'] = df['recency'].astype(float)
