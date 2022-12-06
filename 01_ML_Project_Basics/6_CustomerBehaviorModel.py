@@ -30,7 +30,7 @@ def predict(data):
     df['is_referral'] = df['is_referral'].astype(float)
 
     cdsw.track_metric("input_data", dict(df))
-    cdsw.track_metric("prediction", customer_behavior_model.predict(df)[0]['result'])
+    cdsw.track_metric("prediction", customer_behavior_model.predict(df)['result'])
 
     return {'result': customer_behavior_model.predict(df)[0]}
 
