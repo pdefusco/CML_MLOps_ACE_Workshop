@@ -31,7 +31,9 @@ def predict(data):
 
     cdsw.track_metric("input_data", dict(df))
     pred = customer_behavior_model.predict(df)[0]
-    cdsw.track_metric("prediction", int(pred))
+    print(pred)
+    print(type(pred))
+    cdsw.track_metric("prediction", float(pred))
 
     return {'result': pred}
 
