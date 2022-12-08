@@ -28,17 +28,13 @@ def predict(data):
     df['used_discount'] = df['used_discount'].astype(float)
     df['used_bogo'] = df['used_bogo'].astype(float)
     df['is_referral'] = df['is_referral'].astype(float)
-
-    #cdsw.track_metric("input_data", dict(df))
+    
+    cdsw.track_metric("input_data", df.T.to_dict()[0])
+    
     pred = customer_behavior_model.predict(df)[0]
-    print(pred)
-    print(type(pred))
-    #cdsw.track_metric("prediction", float(pred))
+    cdsw.track_metric("prediction", float(pred))
 
-    return {'result': pred}
-
-#  Web  329.08             1  No Offer           6       1     1
-#recency history used_discount used_bogo is_referral channel offer
+    return {'input_data' : df.T.to_dict()[0], 'prediction' : pred}
 
 #{
 #  "recency": “6”,
