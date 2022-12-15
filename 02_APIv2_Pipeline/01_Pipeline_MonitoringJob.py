@@ -158,3 +158,9 @@ sns.barplot(
     color="grey",
     data=agg_metrics,
 )
+
+if metrics_df['metrics.accuracy'] < 0.5:
+    # Get a specific job given the project and job ID.
+    train_model_job_id = 11
+    train_model_job_body = client.get_job(project_id = project_id, job_id = train_model_job_id)
+    job_run = client.create_job_run(train_model_job_body, project_id)
