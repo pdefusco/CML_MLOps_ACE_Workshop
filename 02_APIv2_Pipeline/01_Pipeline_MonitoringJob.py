@@ -112,6 +112,7 @@ model_metrics = cdsw.read_metrics(
 
 # This is a handy way to unravel the dict into a big pandas dataframe
 metrics_df = pd.io.json.json_normalize(model_metrics["metrics"])
+
 metrics_df.tail().T
 
 # Write the data to SQL lite for visualization
@@ -159,8 +160,8 @@ sns.barplot(
     data=agg_metrics,
 )
 
-if metrics_df['metrics.accuracy'] < 0.5:
+if agg_metrics.sort_values(by="metrics.accuracy", ascending=False)["metrics.accuracy"].iloc[-10:].mean() < 0.40:
     # Get a specific job given the project and job ID.
-    train_model_job_id = 11
+    train_model_job_id = "r2la-ifhe-asnz-2u8w"
     train_model_job_body = client.get_job(project_id = project_id, job_id = train_model_job_id)
     job_run = client.create_job_run(train_model_job_body, project_id)
