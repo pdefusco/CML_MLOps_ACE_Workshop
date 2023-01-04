@@ -47,7 +47,6 @@ import os
 import matplotlib.pyplot as plt
 import cdsw
 import time
-
 import warnings
 warnings.filterwarnings('ignore')
 from sklearn.model_selection import cross_val_score
@@ -59,7 +58,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder, LabelEncoder, Binarizer
 from sklearn.pipeline import Pipeline
-
 from src.api import ApiUtility
 import pickle
 
@@ -82,6 +80,8 @@ model_endpoint = (
     HOST.split("//")[0] + "//modelservice." + HOST.split("//")[1] + "/model"
 )
 
+project_id = os.environ["CDSW_PROJECT_ID"]
+
 # Read in the model metrics dict
 model_metrics = cdsw.read_metrics(
     model_crn=Model_CRN, model_deployment_crn=Deployment_CRN
@@ -94,26 +94,28 @@ y = metrics_df['metrics.final_label'].dropna()
 X = metrics_df.filter(like="input_data").dropna().drop(columns=['metrics.input_data.conversion'])
 
 # Load most up to date model
-
-def load_latest_model_version(model_id):
+def load_latest_model_version():
     
-    client.get_model(project_id = project_id, model_id = model_id)
-
-    loaded_model = pickle.load(open(filename, 'rb'))
+    model_dir = "/home/cdsw/01_ML_Project_Basics/models"
+    models_list = os.listdir(model_dir)
+    
+    model_dates = [int(sub.split('.')[1]) for sub in models_list]
+    latest_model_index = np.argmax(model_dates)
+    latest_model_path = models_list[latest_model_index]
+    
+    loaded_model = pickle.load(open(latest_model_path, 'rb'))
     
     return loaded_model
-
-loaded_model = load_latest_model_version("349") #The Model ID should be hardcoded as it does not change once deployed for the first time
-
+  
+loaded_model = load_latest_model_version() 
 loaded_model.fit(X, y)
 
-
-def store_latest_model_version(path):
+def store_latest_model_version(model):
     
-    pickle.dump(pipelineModel, open(path, 'wb'))
-
+    now = time.time()
+    filename = "/home/cdsw/01_ML_Project_Basics/models/final_model_{}.sav".format(round(now))
     
-now = time.time()
-latest_model_path = 'models/final_model_{}.sav'.format(now)
+    pickle.dump(model, open(path, 'wb'))
+
 
 store_latest_model_version(latest_model_path)

@@ -162,7 +162,7 @@ sns.barplot(
 
 if agg_metrics.sort_values(by="metrics.accuracy", ascending=False)["metrics.accuracy"].iloc[-10:].mean() < 0.40:
     # Get a specific job given the project and job ID.
-    train_model_job_id = "bsvu-wwl2-1m42-vglg"
+    train_model_job_id = "1dbz-fl40-6bjd-yts4"
     train_model_job_body = cmlapi.CreateJobRequest(
       project_id = project_id,
       name = "TrainingJob",
@@ -171,9 +171,7 @@ if agg_metrics.sort_values(by="metrics.accuracy", ascending=False)["metrics.accu
       cpu = 2,
       memory = 4,
       runtime_identifier = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.7-standard:2022.11.1-b2",
-      runtime_addon_identifiers = ["spark311-13-hf1"],
-      parent_job_id = "cyr0-1pjl-5h5w-qo83"
-      #cyr0-1pjl-5h5w-qo83
+      runtime_addon_identifiers = ["spark311-13-hf1"]
     )
     
     #train_model_job_body = client.get_job(project_id = project_id, job_id = train_model_job_id)
