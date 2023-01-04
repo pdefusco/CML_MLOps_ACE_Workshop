@@ -2,9 +2,27 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.pipeline import Pipeline
 import cdsw
 import pandas as pd
+import numpy as np
 import pickle
+import os
 
-customer_behavior_model = pickle.load(open('/home/cdsw/01_ML_Project_Basics/models/final_model.sav', 'rb'))
+# Load most up to date model
+def load_latest_model_version():
+    
+    model_dir = "/home/cdsw/01_ML_Project_Basics/models"
+    models_list = os.listdir(model_dir)
+    models_dates_list = [model_path.replace(".sav","") for model_path in models_list if "final" in model_path]
+    model_dates = [int(i.split('_')[2]) for i in models_dates_list]
+    latest_model_index = np.argmax(model_dates)
+    latest_model_path = model_dir + "/" + models_list[latest_model_index]
+    
+    loaded_model = pickle.load(open(latest_model_path, 'rb'))
+    
+    return loaded_model
+
+
+
+customer_behavior_model = load_latest_model_version()
 
 #Inputs:
 #recency            int64
