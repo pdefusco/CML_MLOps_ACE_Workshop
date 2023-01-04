@@ -46,6 +46,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import cdsw
+import cmlapi
 import time
 import warnings
 warnings.filterwarnings('ignore')
@@ -91,32 +92,32 @@ model_metrics = cdsw.read_metrics(
 metrics_df = pd.io.json.json_normalize(model_metrics["metrics"])
 
 y = metrics_df['metrics.final_label'].dropna()
+y = y.astype("int")
 X = metrics_df.filter(like="input_data").dropna().drop(columns=['metrics.input_data.conversion'])
+X.columns = X.columns.str.replace('metrics.input_data.','')
+
 
 # Load most up to date model
 def load_latest_model_version():
     
     model_dir = "/home/cdsw/01_ML_Project_Basics/models"
     models_list = os.listdir(model_dir)
-    models_dates_list = [model_path.replace(".sav","") for model_path in models_list]
-    
-    model_dates = [int(i.split('_')[1]) for i in models_dates_list]
+    models_dates_list = [model_path.replace(".sav","") for model_path in models_list if "final" in model_path]
+    model_dates = [int(i.split('_')[2]) for i in models_dates_list]
     latest_model_index = np.argmax(model_dates)
-    latest_model_path = models_list[latest_model_index]
+    latest_model_path = model_dir + "/" + models_list[latest_model_index]
     
     loaded_model = pickle.load(open(latest_model_path, 'rb'))
     
     return loaded_model
   
-loaded_model = load_latest_model_version() 
-loaded_model.fit(X, y)
-
 def store_latest_model_version(model):
     
     now = time.time()
     filename = "/home/cdsw/01_ML_Project_Basics/models/final_model_{}.sav".format(round(now))
     
-    pickle.dump(model, open(path, 'wb'))
-
-
-store_latest_model_version(latest_model_path)
+    pickle.dump(model, open(filename, 'wb'))
+  
+loaded_model = load_latest_model_version() 
+loaded_model.fit(X, y)
+store_latest_model_version(loaded_model)
