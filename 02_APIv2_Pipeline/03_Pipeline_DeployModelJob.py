@@ -79,10 +79,10 @@ model_build_request = cmlapi.CreateModelBuildRequest(
     project_id = project_id,
     model_id = model.id,
     comment = "test comment",
-    file_path = "models/model_endpoint.py",
+    file_path = "01_ML_Project_Basics/6_B_CustomerEndpoint.py",
     function_name = "predict",
     kernel = "python3",
-    runtime_identifier = "docker.repository.cloudera.com/cdsw/ml-runtime-workbench-python3.7-standard:2021.09.1-b5"
+    runtime_identifier = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.9-standard:2022.11.1-b2"
     #runtime_addon_identifiers = "spark311-13-hf1"
 )
 

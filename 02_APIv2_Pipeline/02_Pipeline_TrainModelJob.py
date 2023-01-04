@@ -96,7 +96,6 @@ y = y.astype("int")
 X = metrics_df.filter(like="input_data").dropna().drop(columns=['metrics.input_data.conversion'])
 X.columns = X.columns.str.replace('metrics.input_data.','')
 
-
 # Load most up to date model
 def load_latest_model_version():
     
