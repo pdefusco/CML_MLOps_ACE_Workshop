@@ -98,8 +98,9 @@ def load_latest_model_version():
     
     model_dir = "/home/cdsw/01_ML_Project_Basics/models"
     models_list = os.listdir(model_dir)
+    models_dates_list = [model_path.replace(".sav","") for model_path in models_list]
     
-    model_dates = [int(sub.split('.')[1]) for sub in models_list]
+    model_dates = [int(i.split('_')[1]) for i in models_dates_list]
     latest_model_index = np.argmax(model_dates)
     latest_model_path = models_list[latest_model_index]
     
