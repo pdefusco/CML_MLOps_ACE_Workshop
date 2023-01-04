@@ -137,7 +137,7 @@ for index, vals in enumerate(response_labels_sample):
     final_labels.append(vals["final_label"])
     response_labels.append(float(vals["response_label"]["prediction"]))
     if index % 100 == 99:
-        print("Adding accuracy metrc")
+        print("Adding accuracy metric")
         end_timestamp_ms = vals["timestamp_ms"]
         accuracy = classification_report(
             [float(i) for i in final_labels], response_labels, output_dict=True
