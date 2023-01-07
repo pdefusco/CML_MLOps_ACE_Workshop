@@ -68,17 +68,20 @@ class ProductionModelPipeline:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
-    def __init__(self, model_file_path, model_script_path, model_training_data_path, project_id, model_name):
+    def __init__(self, base_model_file_path, base_model_script_path, base_model_training_data_path, project_id, model_name):
         self.client = cmlapi.default_client()
-        self.model_file_path = model_file_path
-        self.model_script_path = model_script_path
-        self.model_training_data_path = model_training_data_path
+        self.base_model_file_path = base_model_file_path
+        self.base_model_script_path = base_model_script_path
+        self.base_model_training_data_path = base_model_training_data_path
         self.project_id = project_id
         self.model_name = model_name
 
+    def create_job_body(self, job_name, script, cpu, mem, parent_job, runtime_id, *runtime_addon_ids):
+        """
+        Create a Job Request Body via APIv2 given an APIv2 client object and Job Details.
+        This function only works for models deployed within the current project.
+        """
 
-    def create_job_body(self, job_name, script, cpu, mem, runtime_id, *runtime_addon_ids):
-        # Create a job. We will create dependent/children jobs of this job, so we call this one a "grandparent job". The parameter "runtime_identifier" is needed if this is running in a runtimes project.
         job_body = self.client.CreateJobRequest(
             project_id = self.project_id,
             name = job_name,
@@ -94,22 +97,27 @@ class ProductionModelPipeline:
 
         return job_body
 
-
     def create_job(self, job_body):
-        # Create this job within the project specified by the project_id parameter.
+        """
+        Create a Job via APIv2 given an APIv2 client object and Job Body.
+        This function only works for models deployed within the current project.
+        """
+
         job_instance = client.create_job(job_body, self.project_id)
         print("Job Instance with Name {} Created Successfully".format(job_body.name))
 
         return job_instance
 
-
     def run_job(self, job_body, job_instance):
+        """
+        Run a Job via APIv2 given an APIv2 client object, Job Body and Job Create Instance.
+        This function only works for models deployed within the current project.
+        """
 
         job_run = self.client.create_job_run(job_body, self.project_id, job_instance.id)
         print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
 
         return job_run
-
 
     def get_latest_deployment_details(self, model_name):
         """
@@ -169,16 +177,15 @@ class ProductionModelPipeline:
             "latest_deployment_crn": model_deployment_crn,
         }
 
-
     def get_latest_standard_runtime(self):
         """
-        Use CML APIv2 to identify and return the latest version of a Python 3.6,
+        Use CML APIv2 to identify and return the latest version of a Python 3.7,
         Standard, Workbench Runtime
         """
 
         try:
             runtime_criteria = {
-                "kernel": "Python 3.6",
+                "kernel": "Python 3.7",
                 "edition": "Standard",
                 "editor": "Workbench",
             }
@@ -197,57 +204,92 @@ class ProductionModelPipeline:
             logger.info("No matching runtime available.")
             return None
 
-
-    def deploy_monitoring_application(self, application_name):
+    def get_all_model_endpoint_details(self):
         """
-        Use CML APIv2 to create and deploy an application to serve the Evidently
-        monitoring reports via a Flask application.
-        Utilize a runtime if available, else use legacy Python3 engine.
+        Use CML APIv2 to collect all model details required to analyze model metrics
+        This function only works for models deployed within the current project.
         """
 
-        ipt = {
-            "name": application_name,
-            "description": "An Evidently.ai dashboard for monitoring data drift, target drift, and regression performance.",
-            "project_id": os.environ["CDSW_PROJECT_ID"],
-            "subdomain": "".join(
-                [random.choice(string.ascii_lowercase) for _ in range(6)]
-            ),
-            "script": "apps/app.py",
-            "kernel": "python3",
-            "cpu": 1,
-            "memory": 2,
-        }
+        Model_AccessKey = self.get_latest_deployment_details_allmodels()["model_access_key"]
+        Deployment_CRN = self.get_latest_deployment_details_allmodels()["latest_deployment_crn"]
+        Model_CRN = self.get_latest_deployment_details_allmodels()["model_crn"]
 
-        # configure runtime if available
-        if (
-            self.client.get_project(os.environ["CDSW_PROJECT_ID"]).default_engine_type
-            != "legacy_engine"
-        ):
-            ipt["runtime_identifier"] = self.get_latest_standard_runtime()
-            del ipt["kernel"]
-
-        application_request = cmlapi.CreateApplicationRequest(**ipt)
-
-        self.client.create_application(
-            project_id=os.environ["CDSW_PROJECT_ID"], body=application_request
-        )
-        logger.info(f"Created and deployed new application: {application_name}")
-
-
-    def restart_running_application(self, application_name):
-        """
-        Use CML APIv2 to restart a running application provided the application name.
-        """
-
-        search_criteria = {"name": application_name}
-
-        app = self.client.list_applications(
-            project_id=os.environ["CDSW_PROJECT_ID"],
-            search_filter=json.dumps(search_criteria),
-        ).to_dict()["applications"][0]
-
-        self.client.restart_application(
-            project_id=os.environ["CDSW_PROJECT_ID"], application_id=app["id"]
+        # Get the various Model Endpoint details
+        HOST = os.getenv("CDSW_API_URL").split(":")[0] + "://" + os.getenv("CDSW_DOMAIN")
+        model_endpoint = (
+            HOST.split("//")[0] + "//modelservice." + HOST.split("//")[1] + "/model"
         )
 
-        logger.info(f"Restarted existing application: {application_name}")
+        return Model_AccessKey, Deployment_CRN, Model_CRN, model_endpoint
+
+    def get_model_metrics(self, Model_CRN, Deployment_CRN, db_backup=False):
+        """
+        Use CML APIv2 to collect all model metrics provided CML Model endpoint details,
+        This function only works for models deployed within the current project.
+        """
+
+        model_metrics = cdsw.read_metrics(
+            model_crn=Model_CRN, model_deployment_crn=Deployment_CRN
+        )
+
+        # This is a handy way to unravel the dict into a big pandas dataframe
+        metrics_df = pd.io.json.json_normalize(model_metrics["metrics"])
+
+        # Write the data to SQL lite for visualization
+        if db_backup == True:
+            if not (os.path.exists("model_metrics.db")):
+                conn = sqlite3.connect("model_metrics.db")
+                metrics_df.to_sql(name="model_metrics", con=conn)
+
+        # Do some conversions & calculations on the raw metrics
+        metrics_df["startTimeStampMs"] = pd.to_datetime(
+            metrics_df["startTimeStampMs"], unit="ms"
+        )
+        metrics_df["endTimeStampMs"] = pd.to_datetime(metrics_df["endTimeStampMs"], unit="ms")
+        metrics_df["processing_time"] = (
+            metrics_df["endTimeStampMs"] - metrics_df["startTimeStampMs"]
+        ).dt.microseconds * 1000
+
+        return metrics_df
+
+    def unravel_metrics_df(self, metrics_df):
+        """
+        Parse metrics_df outputting X, y, formatted for model training
+        This function only works for models deployed within the current project.
+        """
+
+        y = metrics_df['metrics.final_label'].dropna()
+        y = y.astype("int")
+        X = metrics_df.filter(like="input_data").dropna().drop(columns=['metrics.input_data.conversion'])
+        X.columns = X.columns.str.replace('metrics.input_data.','')
+
+        return X, y
+
+    def load_latest_model_version(self, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
+        """
+        Load the latest model version in the project.
+        This function only works for models deployed within the current project.
+        """
+
+        models_list = os.listdir(model_dir)
+        models_dates_list = [model_path.replace(".sav","") for model_path in models_list if "final" in model_path]
+        model_dates = [int(i.split('_')[2]) for i in models_dates_list]
+        latest_model_index = np.argmax(model_dates)
+        latest_model_path = model_dir + "/" + models_list[latest_model_index]
+
+        loaded_model = pickle.load(open(latest_model_path, 'rb'))
+
+        return loaded_model
+
+    def store_latest_model_version(self, loaded_model, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
+        """
+        Store the latest model version in the project.
+        This function only works for models deployed within the current project.
+        """
+
+        now = time.time()
+        filename = model_dir + "/final_model_{}.sav".format(round(now))
+
+        pickle.dump(model, open(filename, 'wb'))
+
+        print("Model backed up with path {}".format(filename))
