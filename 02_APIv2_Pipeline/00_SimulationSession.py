@@ -104,7 +104,7 @@ for record in json.loads(df.astype("str").to_json(orient="records")):
     ) else None
     percent_counter += 1
     no_approve_record = copy.deepcopy(record)
-      
+
     # **note** this is an easy way to interact with a model in a script
     response = cdsw.call_model(Model_AccessKey, no_approve_record)
     response_labels_sample.append(
@@ -124,7 +124,7 @@ for record in json.loads(df.astype("str").to_json(orient="records")):
 #    },
 #    "uuid": "7e3b3373-4487-4788-8b63-0ef8d9e9fa5c"
 #}
-    
+
 # The "ground truth" loop adds the updated actual label value and an accuracy measure
 # every 100 calls to the model.
 for index, vals in enumerate(response_labels_sample):
