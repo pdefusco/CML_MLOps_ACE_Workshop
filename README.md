@@ -12,6 +12,10 @@ MLOps is a set of practices and tools used by data scientists and engineers with
 
 This Hands On Lab guides you through the implementation of an ML Ops pipeline in CML. Your Cloudera HOL lead will send you a step by step guide with detailed end to end instructions. In summary, the HOL will consist of the following high level sections.
 
+#### 0. Introduction to MLOps
+
+
+
 #### 1. Building a Model with CML
 
 Starting from the very beginning, this exercise will walk you through a manual model implementation. First, you will prototype a baseline ML Model. Then, you will move it to production in both a Database Scoring and a REST Endpoint fashion.
