@@ -173,10 +173,6 @@ if agg_metrics.sort_values(by="metrics.accuracy", ascending=False)["metrics.accu
       runtime_identifier = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.7-standard:2022.04.1-b6",
       runtime_addon_identifiers = ["spark311-13-hf1"]
     )
-    
+
     #train_model_job_body = client.get_job(project_id = project_id, job_id = train_model_job_id)
     job_run = client.create_job_run(train_model_job_body, project_id, train_model_job_id)
-
-    
-    
-    

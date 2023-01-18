@@ -97,25 +97,25 @@ X.columns = X.columns.str.replace('metrics.input_data.','')
 
 # Load most up to date model
 def load_latest_model_version():
-    
-    model_dir = "/home/cdsw/01_ML_Project_Basics/models"
+
+    model_dir = "/home/cdsw/models"
     models_list = os.listdir(model_dir)
     models_dates_list = [model_path.replace(".sav","") for model_path in models_list if "final" in model_path]
     model_dates = [int(i.split('_')[2]) for i in models_dates_list]
     latest_model_index = np.argmax(model_dates)
     latest_model_path = model_dir + "/" + models_list[latest_model_index]
-    
+
     loaded_model = pickle.load(open(latest_model_path, 'rb'))
-    
+
     return loaded_model
-  
+
 def store_latest_model_version(model):
-    
+
     now = time.time()
-    filename = "/home/cdsw/01_ML_Project_Basics/models/final_model_{}.sav".format(round(now))
-    
+    filename = "/home/cdsw/models/final_model_{}.sav".format(round(now))
+
     pickle.dump(model, open(filename, 'wb'))
-  
-loaded_model = load_latest_model_version() 
+
+loaded_model = load_latest_model_version()
 loaded_model.fit(X, y)
 store_latest_model_version(loaded_model)

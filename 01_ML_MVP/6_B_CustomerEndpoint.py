@@ -8,16 +8,16 @@ import os
 
 # Load most up to date model
 def load_latest_model_version():
-    
-    model_dir = "/home/cdsw/01_ML_Project_Basics/models"
+
+    model_dir = "/home/cdsw/models"
     models_list = os.listdir(model_dir)
     models_dates_list = [model_path.replace(".sav","") for model_path in models_list if "final" in model_path]
     model_dates = [int(i.split('_')[2]) for i in models_dates_list]
     latest_model_index = np.argmax(model_dates)
     latest_model_path = model_dir + "/" + models_list[latest_model_index]
-    
+
     loaded_model = pickle.load(open(latest_model_path, 'rb'))
-    
+
     return loaded_model
 
 
@@ -46,9 +46,9 @@ def predict(data):
     df['used_discount'] = df['used_discount'].astype(float)
     df['used_bogo'] = df['used_bogo'].astype(float)
     df['is_referral'] = df['is_referral'].astype(float)
-    
+
     cdsw.track_metric("input_data", df.T.to_dict()[0])
-    
+
     pred = customer_behavior_model.predict(df)[0]
     cdsw.track_metric("prediction", float(pred))
 
