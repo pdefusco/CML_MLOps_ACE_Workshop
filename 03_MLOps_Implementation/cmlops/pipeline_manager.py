@@ -1,7 +1,7 @@
 # ###########################################################################
 #
 #  CLOUDERA APPLIED MACHINE LEARNING PROTOTYPE (AMP)
-#  (C) Cloudera, Inc. 2021
+#  (C) Cloudera, Inc. 2023
 #  All rights reserved.
 #
 #  Applicable Open Source License: Apache 2.0
@@ -175,7 +175,6 @@ class CMLProductionPipeline:
             "latest_build_id": build_id,
             "latest_deployment_crn": model_deployment_crn,
         }
-
 
     def get_latest_deployment_details_allmodels(self):
         """
