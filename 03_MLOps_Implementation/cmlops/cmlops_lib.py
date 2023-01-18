@@ -60,7 +60,7 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-class ProductionModelPipeline:
+class CMLProductionPipeline:
     """A class for managing CML Production Deployments with CML API_v2
     This class contains methods that wrap API_v2 to achieve specific
     needs that facilitate the creation and productionization of a Model Pipeline.
@@ -68,13 +68,13 @@ class ProductionModelPipeline:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
-    def __init__(self, base_model_file_path, base_model_script_path, base_model_training_data_path, project_id, model_name, function_name):
+    def __init__(self, base_model_file_path, base_model_script_path, base_model_training_data_path, project_id, function_name):
         self.client = cmlapi.default_client()
         self.base_model_file_path = base_model_file_path
         self.base_model_script_path = base_model_script_path
         self.base_model_training_data_path = base_model_training_data_path
         self.project_id = project_id
-        self.model_name = model_name
+        #self.model_name = model_name
         self.function_name = function_name
 
     def create_job_body(self, job_name, script, cpu, mem, parent_job, runtime_id, *runtime_addon_ids):
@@ -126,11 +126,9 @@ class ProductionModelPipeline:
         This function only works for models deployed within the current project.
         """
 
-        project_id = os.environ["CDSW_PROJECT_ID"]
-
         # gather model details
         models = (
-            self.client.list_models(project_id=project_id, async_req=True)
+            self.client.list_models(project_id=self.project_id, async_req=True)
             .get()
             .to_dict()
         )
@@ -171,6 +169,63 @@ class ProductionModelPipeline:
 
         return {
             "model_name": model_name,
+            "model_id": model_id,
+            "model_crn": model_crn,
+            "model_access_key": model_access_key,
+            "latest_build_id": build_id,
+            "latest_deployment_crn": model_deployment_crn,
+        }
+
+
+    def get_latest_deployment_details_allmodels(self):
+        """
+        Given a APIv2 client object and Model Name, use APIv2 to retrieve details about the latest/current deployment.
+        This function only works for models deployed within the current project.
+        """
+
+        # gather model details
+        models = (
+            self.client.list_models(project_id=self.project_id, async_req=True, page_size = 50)
+            .get()
+            .to_dict()
+        )
+        model_info = [
+            model for model in models["models"]
+        ][-1]
+
+        model_id = model_info["id"]
+        model_crn = model_info["crn"]
+        model_access_key = model_info["access_key"]
+
+        # gather latest build details
+        builds = (
+            self.client.list_model_builds(
+                project_id=project_id, model_id=model_id, async_req=True, page_size = 50
+            )
+            .get()
+            .to_dict()
+        )
+        build_info = builds["model_builds"][-1]  # most recent build
+
+        build_id = build_info["id"]
+
+        # gather latest deployment details
+        deployments = (
+            self.client.list_model_deployments(
+                project_id=project_id,
+                model_id=model_id,
+                build_id=build_id,
+                async_req=True,
+                page_size = 50
+            )
+            .get()
+            .to_dict()
+        )
+        deployment_info = deployments["model_deployments"][-1]  # most recent deployment
+
+        model_deployment_crn = deployment_info["crn"]
+
+        return {
             "model_id": model_id,
             "model_crn": model_crn,
             "model_access_key": model_access_key,
