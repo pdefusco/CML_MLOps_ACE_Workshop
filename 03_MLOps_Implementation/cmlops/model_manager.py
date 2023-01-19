@@ -60,7 +60,7 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-class CMLProductionPipeline:
+class CMLProductionModel:
     """A class for managing CML Production Deployments with CML API_v2
     This class contains methods that wrap API_v2 to achieve specific
     needs that facilitate the creation and productionization of a Model Pipeline.
@@ -77,48 +77,6 @@ class CMLProductionPipeline:
         #self.model_name = model_name
         self.function_name = function_name
 
-    def create_job_body(self, job_name, script, cpu, mem, parent_job, runtime_id, *runtime_addon_ids):
-        """
-        Create a Job Request Body via APIv2 given an APIv2 client object and Job Details.
-        This function only works for models deployed within the current project.
-        """
-
-        job_body = self.client.CreateJobRequest(
-            project_id = self.project_id,
-            name = job_name,
-            script = script,
-            cpu = cpu,
-            memory = mem,
-            runtime_identifier = runtime_id,
-            runtime_addon_identifiers = list(runtime_addon_ids)
-        )
-
-        print("Job Body for Job {}: ".format(job_body.name))
-        print(job_body)
-
-        return job_body
-
-    def create_job(self, job_body):
-        """
-        Create a Job via APIv2 given an APIv2 client object and Job Body.
-        This function only works for models deployed within the current project.
-        """
-
-        job_instance = client.create_job(job_body, self.project_id)
-        print("Job Instance with Name {} Created Successfully".format(job_body.name))
-
-        return job_instance
-
-    def run_job(self, job_body, job_instance):
-        """
-        Run a Job via APIv2 given an APIv2 client object, Job Body and Job Create Instance.
-        This function only works for models deployed within the current project.
-        """
-
-        job_run = self.client.create_job_run(job_body, self.project_id, job_instance.id)
-        print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
-
-        return job_run
 
     def get_latest_deployment_details(self, model_name):
         """

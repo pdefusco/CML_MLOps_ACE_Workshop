@@ -60,24 +60,8 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-class CMLGitWrapper:
-    """A class for interacting with GitHub from CML Projects
-    This class contains methods that wrap API_v2 and the PyGithub libs to
-    facilitate the first-time creation, backing up and/or redeployment of a CML Project in a new Workspace/Project.
-    Attributes:
-        client (cmlapi.api.cml_service_api.CMLServiceApi)
-    """
-
-    def __init__(self, git_username, git_pwd, cml_workspace_url, project_id, function_name):
-
-
-    def git_backup():
-    """
-    Push the project to GitHub with the Python Github Wrapper.
-    """
-    return None
-
 class CMLProjectManager:
+
     """A class for managing CML Project resources with CML API_v2
     This class contains methods that wrap API_v2 to
     facilitate the first-time creation or redeployment of CML Project models and jobs
@@ -85,13 +69,59 @@ class CMLProjectManager:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
-    def __init__(self, git_username, git_pwd, cml_workspace_url, project_id, function_name):
+    def __init__(self):
+        self.project_id = os.environ["CDSW_PROJECT_ID"]
+        self.cml_workspace_url = os.environ["CDSW_DOMAIN"]
 
 
-    def collect_project_metadata():
+    def get_all_job_details(self):
     """
-    Create a representation of all project metadata and artifacts as of time of execution.
+    Create a metadata representation of all jobs and related artifacts as of time of execution.
     The representation can be used to easily reproduce project artifacts in other environments.
     """
 
-    def
+    def get_all_model_details(self):
+
+
+    def create_job_body(self, job_name, script, cpu, mem, parent_job, runtime_id, *runtime_addon_ids):
+        """
+        Create a Job Request Body via APIv2 given an APIv2 client object and Job Details.
+        This function only works for models deployed within the current project.
+        """
+
+        job_body = self.client.CreateJobRequest(
+            project_id = self.project_id,
+            name = job_name,
+            script = script,
+            cpu = cpu,
+            memory = mem,
+            runtime_identifier = runtime_id,
+            runtime_addon_identifiers = list(runtime_addon_ids)
+        )
+
+        print("Job Body for Job {}: ".format(job_body.name))
+        print(job_body)
+
+        return job_body
+
+    def create_job(self, job_body):
+        """
+        Create a Job via APIv2 given an APIv2 client object and Job Body.
+        This function only works for models deployed within the current project.
+        """
+
+        job_instance = client.create_job(job_body, self.project_id)
+        print("Job Instance with Name {} Created Successfully".format(job_body.name))
+
+        return job_instance
+
+    def run_job(self, job_body, job_instance):
+        """
+        Run a Job via APIv2 given an APIv2 client object, Job Body and Job Create Instance.
+        This function only works for models deployed within the current project.
+        """
+
+        job_run = self.client.create_job_run(job_body, self.project_id, job_instance.id)
+        print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
+
+        return job_run
