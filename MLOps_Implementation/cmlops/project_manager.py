@@ -147,8 +147,19 @@ class CMLProjectManager:
         Create a Job Body with an instance of Job type as input.
         This function helps you reproduce a Job from one Project to Another.
         """
-        job_body = jobResponse
-
+        
+        job_body = self.client.CreateJobRequest(
+            project_id = self.project_id,
+            name = jobResponse["name"],
+            script = jobResponse["script"],
+            cpu = jobResponse["cpu"],
+            memory = jobResponse["memory"],
+            runtime_identifier = jobResponse["runtime_identifier"],
+            runtime_addon_identifiers = jobResponse["runtime_addon_identifiers"]
+        )
+        print("Job Body for Job {}: ".format(job_body.name))
+        print(job_body)
+        
         return job_body
 
     def create_job(self, job_body):
