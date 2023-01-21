@@ -205,10 +205,9 @@ class CMLProjectManager:
     def create_yaml_job(self, job_body):
       yaml_dict = {
           'job': { 
-              'job_body': job_body, 
-              'last_updated_timestamp': 'current_ts', 
-              'job_script_path': 'filepath',
+              'job_body': job_body,
               'requirements': 'requirements_path',
+              'last_updated_timestamp': 'current_ts'
           }
       }
       
