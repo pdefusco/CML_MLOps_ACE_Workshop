@@ -194,13 +194,13 @@ class CMLProjectManager:
                 fo.write("---\n")
                 
         sdump = "  " + yaml.dump(
-                    new_yaml_data_dict
+                    yaml_dict
                     ,indent=4
                     )
 
         with open("project-metadata.yaml", "a") as fo:
             fo.write(sdump)
-        
+
     def create_yaml_job(self, job_body):
         yaml_dict = {
           'job': { 
