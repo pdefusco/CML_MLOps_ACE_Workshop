@@ -46,6 +46,7 @@ from cmlapi.rest import ApiException
 from pprint import pprint
 import random
 import logging
+import yaml
 from packaging import version
 
 logger = logging.getLogger(__name__)
@@ -181,10 +182,41 @@ class CMLProjectManager:
         job_run = self.client.create_job_run(job_body, self.project_id, job_instance.id)
         print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
 
-        return job_run
+        return job_run  
+      
+    def update_project_metadata(self, yaml_dict):
+        """
+        Create empty project-metadata.yaml file for the first time
+        """
+        
+        if not os.path.isfile("project-metadata.yaml"):
 
-    def get_all_model_details(self):
-        """
-        Create a metadata representation of all jobs and related artifacts as of time of execution.
-        The representation can be used to easily reproduce project artifacts in other environments.
-        """
+            with open("project-metadata.yaml", "a") as fo:
+                fo.write("---\n")
+                
+        sdump = "  " + yaml.dump(
+                    new_yaml_data_dict
+                    ,indent=4
+                    )
+
+        with open("project-metadata.yaml", "a") as fo:
+            fo.write(sdump)
+        
+    def create_yaml_job(self, job_body):
+      yaml_dict = {
+          'job': { 
+              'job_body': job_body, 
+              'last_updated_timestamp': 'current_ts', 
+              'job_script_path': 'filepath',
+              'requirements': 'requirements_path',
+          }
+      }
+      
+      
+      
+      
+    #def get_all_model_details(self):
+    #    """
+    #    Create a metadata representation of all jobs and related artifacts as of time of execution.
+    #    The representation can be used to easily reproduce project artifacts in other environments.
+    #    """
