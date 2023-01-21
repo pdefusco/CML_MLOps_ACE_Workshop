@@ -128,7 +128,7 @@ class CMLProjectManager:
         This function only works for models deployed within the current project.
         """
 
-        job_body = self.client.CreateJobRequest(
+        job_body = cmlapi.CreateJobRequest(
             project_id = self.project_id,
             name = job_name,
             script = script,
@@ -147,9 +147,8 @@ class CMLProjectManager:
         """
         Create a Job Body with an instance of Job type as input.
         This function helps you reproduce a Job from one Project to Another.
-        """
-        
-        job_body = self.client.CreateJobRequest(
+        """  
+        job_body = cmlapi.CreateJobRequest(
             project_id = self.project_id,
             name = jobResponse["name"],
             script = jobResponse["script"],
