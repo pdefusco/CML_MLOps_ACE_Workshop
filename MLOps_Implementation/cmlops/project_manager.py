@@ -202,14 +202,15 @@ class CMLProjectManager:
             fo.write(sdump)
         
     def create_yaml_job(self, job_body):
-      yaml_dict = {
+        yaml_dict = {
           'job': { 
               'job_body': job_body,
               'requirements': 'requirements_path',
               'last_updated_timestamp': 'current_ts'
-          }
-      }
+            }
+        }
       
+        return yaml_dict
       
       
       
