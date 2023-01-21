@@ -84,7 +84,7 @@ class CMLProjectManager:
         """
         try:
             # Return one job.
-            jobResponse = api_instance.get_job(project_id, job_id)
+            jobResponse = api_instance.get_job(project_id, job_id, async_req=True).get().to_dict()
             pprint(jobResponse)
         except ApiException as e:
             print("Exception when calling CMLServiceApi->get_job: %s\n" % e)
@@ -99,7 +99,7 @@ class CMLProjectManager:
         """
         try:
             # Returns all jobs, optionally filtered, sorted, and paginated.
-            listJobsResponse = self.client.list_jobs(self.project_id)
+            listJobsResponse = self.client.list_jobs(self.project_id, async_req=True).get().to_dict()
             pprint(listJobsResponse)
         except ApiException as e:
             print("Exception when calling CMLServiceApi->list_jobs: %s\n" % e)
@@ -114,7 +114,7 @@ class CMLProjectManager:
         """
         try:
             # Lists job runs, optionally filtered, sorted, and paginated.
-            listJobRunsResponse = self.client.list_job_runs(project_id, job_id)
+            listJobRunsResponse = self.client.list_job_runs(project_id, job_id, async_req=True).get().to_dict()
             pprint(listJobRunsResponse)
         except ApiException as e:
             print("Exception when calling CMLServiceApi->list_job_runs: %s\n" % e)
