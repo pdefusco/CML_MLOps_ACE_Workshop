@@ -84,7 +84,7 @@ class CMLProjectManager:
         """
         try:
             # Return one job.
-            jobResponse = self.client.get_job(project_id, job_id, async_req=True).get().to_dict()
+            jobResponse = self.client.get_job(self.project_id, job_id, async_req=True).get().to_dict()
             pprint(jobResponse)
         except ApiException as e:
             print("Exception when calling CMLServiceApi->get_job: %s\n" % e)
