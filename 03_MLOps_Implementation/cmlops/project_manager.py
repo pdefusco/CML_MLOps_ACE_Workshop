@@ -42,6 +42,7 @@ import os
 import json
 import string
 import cmlapi
+from cmlapi.rest import ApiException
 import random
 import logging
 from packaging import version
@@ -72,18 +73,54 @@ class CMLProjectManager:
     def __init__(self):
         self.project_id = os.environ["CDSW_PROJECT_ID"]
         self.cml_workspace_url = os.environ["CDSW_DOMAIN"]
+        self.client = cmlapi.default_client()
 
+    def get_job(self, job_id):
+        """
+        Get Job based on Job ID.
+        The representation can be used to easily reproduce project artifacts in other environments.
+        Returns a response with an instance of type Job.
+        """
+        try:
+            # Return one job.
+            jobResponse = api_instance.get_job(project_id, job_id)
+            pprint(jobResponse)
+        except ApiException as e:
+            print("Exception when calling CMLServiceApi->get_job: %s\n" % e)
 
-    def get_all_job_details(self):
-    """
-    Create a metadata representation of all jobs and related artifacts as of time of execution.
-    The representation can be used to easily reproduce project artifacts in other environments.
-    """
+        return jobResponse
 
-    def get_all_model_details(self):
+    def list_jobs(self):
+        """
+        List all Project Jobs.
+        The representation can be used to easily reproduce project artifacts in other environments.
+        Returns a response with an instance of type ListJobsResponse.
+        """
+        try:
+            # Returns all jobs, optionally filtered, sorted, and paginated.
+            listJobsResponse = self.client.list_jobs(self.project_id)
+            pprint(listJobsResponse)
+        except ApiException as e:
+            print("Exception when calling CMLServiceApi->list_jobs: %s\n" % e)
 
+        return listJobsResponse
 
-    def create_job_body(self, job_name, script, cpu, mem, parent_job, runtime_id, *runtime_addon_ids):
+    def list_job_runs(self, job_id):
+        """
+        List all Project Job Runs.
+        The representation can be used to easily reproduce project artifacts in other environments.
+        Returns a response with an instance of type ListJobRunsResponse.
+        """
+        try:
+            # Lists job runs, optionally filtered, sorted, and paginated.
+            listJobRunsResponse = self.client.list_job_runs(project_id, job_id)
+            pprint(listJobRunsResponse)
+        except ApiException as e:
+            print("Exception when calling CMLServiceApi->list_job_runs: %s\n" % e)
+
+        return listJobRunsResponse
+
+    def create_job_body_from_scratch(self, job_name, script, cpu, mem, parent_job, runtime_id, *runtime_addon_ids):
         """
         Create a Job Request Body via APIv2 given an APIv2 client object and Job Details.
         This function only works for models deployed within the current project.
@@ -104,12 +141,20 @@ class CMLProjectManager:
 
         return job_body
 
+    def create_job_body_from_jobresponse(self, jobResponse):
+        """
+        Create a Job Body with an instance of Job type as input.
+        This function helps you reproduce a Job from one Project to Another.
+        """
+        job_body = jobResponse
+
+        return job_body
+
     def create_job(self, job_body):
         """
         Create a Job via APIv2 given an APIv2 client object and Job Body.
         This function only works for models deployed within the current project.
         """
-
         job_instance = client.create_job(job_body, self.project_id)
         print("Job Instance with Name {} Created Successfully".format(job_body.name))
 
@@ -125,3 +170,9 @@ class CMLProjectManager:
         print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
 
         return job_run
+
+    def get_all_model_details(self):
+        """
+        Create a metadata representation of all jobs and related artifacts as of time of execution.
+        The representation can be used to easily reproduce project artifacts in other environments.
+        """

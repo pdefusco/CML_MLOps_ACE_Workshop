@@ -77,7 +77,6 @@ class CMLProductionModel:
         #self.model_name = model_name
         self.function_name = function_name
 
-
     def get_latest_deployment_details(self, model_name):
         """
         Given a APIv2 client object and Model Name, use APIv2 to retrieve details about the latest/current deployment.
