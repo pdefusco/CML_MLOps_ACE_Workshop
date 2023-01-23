@@ -71,10 +71,12 @@ class CMLModelManager:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
+
     def __init__(self):
         self.project_id = os.environ["CDSW_PROJECT_ID"]
         self.cml_workspace_url = os.environ["CDSW_DOMAIN"]
         self.client = cmlapi.default_client()
+
 
     def get_job(self, job_id):
         """
@@ -91,6 +93,7 @@ class CMLModelManager:
 
         return jobResponse
 
+
     def list_jobs(self):
         """
         List all Project Jobs.
@@ -106,6 +109,7 @@ class CMLModelManager:
 
         return listJobsResponse
 
+
     def list_job_runs(self, job_id):
         """
         List all Project Job Runs.
@@ -120,6 +124,7 @@ class CMLModelManager:
             print("Exception when calling CMLServiceApi->list_job_runs: %s\n" % e)
 
         return listJobRunsResponse
+
 
     def create_job_body_from_scratch(self, job_name, script, cpu, mem, parent_job, runtime_id, *runtime_addon_ids):
         """
@@ -142,6 +147,7 @@ class CMLModelManager:
 
         return job_body
 
+
     def create_job_body_from_jobresponse(self, jobResponse):
         """
         Create a Job Body with an instance of Job type as input.
@@ -161,6 +167,7 @@ class CMLModelManager:
 
         return job_body
 
+
     def create_job(self, job_body):
         """
         Create a Job via APIv2 given an APIv2 client object and Job Body.
@@ -171,6 +178,7 @@ class CMLModelManager:
 
         return job_instance
 
+
     def run_job(self, job_body, job_id):
         """
         Run a Job via APIv2 given an APIv2 client object, Job Body and Job Create Instance.
@@ -180,6 +188,7 @@ class CMLModelManager:
         print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
 
         return job_run
+
 
     def update_project_metadata(self, yaml_dict):
         """
@@ -197,6 +206,7 @@ class CMLModelManager:
         with open("project-metadata.yaml", "a") as fo:
             fo.write("\n")
 
+
     def create_yaml_job(self, jobResponse):
 
         job_id = 'Job_'+jobResponse['id']
@@ -210,6 +220,7 @@ class CMLModelManager:
 
         return yaml_dict
 
+
     def read_proj_metadata(self, yaml_file):
         """
         Parse project metadata yaml so project artifacts can be reproduced in same or new project.
@@ -220,6 +231,7 @@ class CMLModelManager:
             print(all_metadata)
 
         return all_metadata
+
 
     def create_jobbodies_from_proj_metadata(self, proj_metadata):
         """
@@ -232,6 +244,7 @@ class CMLModelManager:
           job_bodies.append(manager.create_job_body_from_jobresponse(jobResponse))
 
         return job_bodies
+
 
     def create_model_request(self):
         """

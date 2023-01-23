@@ -35,7 +35,7 @@ if test_result == True:
     X, y = modelManager.unravel_metrics_df(metrics_df)
     loaded_model_file = load_latest_model_version(model_dir="/home/cdsw/01_ML_Project_Basics/models")
     loaded_model_clf = train_latest_model_version(loaded_model_file, X, y)
-
+    
 
     jobResponse = projManager.get_job(train_model_job_id)
     jobBody = projManager.create_job_body_from_jobresponse(jobResponse)

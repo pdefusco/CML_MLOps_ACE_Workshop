@@ -298,12 +298,12 @@ class CMLProductionModel:
         latest_model_index = np.argmax(model_dates)
         latest_model_path = model_dir + "/" + models_list[latest_model_index]
 
-        loaded_model = pickle.load(open(latest_model_path, 'rb'))
+        loaded_model_clf = pickle.load(open(latest_model_path, 'rb'))
 
-        return loaded_model
+        return loaded_model_clf
 
 
-    def store_latest_model_version(self, loaded_model, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
+    def store_latest_model_version(self, loaded_model_clf, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
         """
         Store the latest model version in the project.
         This function only works for models deployed within the current project.
@@ -312,12 +312,12 @@ class CMLProductionModel:
         now = time.time()
         filename = model_dir + "/final_model_{}.sav".format(round(now))
 
-        pickle.dump(model, open(filename, 'wb'))
+        pickle.dump(loaded_model_clf, open(filename, 'wb'))
 
         print("Model backed up with path {}".format(filename))
 
 
-    def train_latest_model_version(self, loaded_model, X, y):
+    def train_latest_model_version(self, loaded_model_file, X, y):
         """
         Load the latest model version in the project.
         This function only works for models deployed within the current project.
@@ -327,7 +327,7 @@ class CMLProductionModel:
         loaded_model.fit(X, y)
         store_latest_model_version(loaded_model)
 
-        return loaded_model
+        return loaded_model_clf
 
 
     def test_model_performance(self, metrics_df):
