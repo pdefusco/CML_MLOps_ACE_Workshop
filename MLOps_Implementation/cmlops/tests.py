@@ -18,9 +18,3 @@ manager.update_project_metadata(jobBodyYaml)
 proj_metadata = manager.read_proj_metadata('/home/cdsw/project-metadata.yaml')
 
 jobBody = manager.create_job_body_from_jobresponse(proj_metadata[0])
-
-job_bodies = []
-for i in range(len(proj_metadata)):
-  print(proj_metadata[i][1]['job_body'])
-  jobResponse = proj_metadata[i][1]['job_body']
-  job_bodies.append(manager.create_job_body_from_jobresponse(jobResponse))

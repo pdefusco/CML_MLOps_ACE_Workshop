@@ -277,7 +277,7 @@ class CMLProductionModel:
         X.columns = X.columns.str.replace('metrics.input_data.','')
 
         return X, y
-
+      
     def load_latest_model_version(self, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
         """
         Load the latest model version in the project.
@@ -293,6 +293,7 @@ class CMLProductionModel:
         loaded_model = pickle.load(open(latest_model_path, 'rb'))
 
         return loaded_model
+\
 
     def store_latest_model_version(self, loaded_model, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
         """
@@ -307,6 +308,20 @@ class CMLProductionModel:
 
         print("Model backed up with path {}".format(filename))
 
+        
+    def train_latest_model_version(self, loaded_model, X, y):
+        """
+        Load the latest model version in the project.
+        This function only works for models deployed within the current project.
+        """
+        
+        loaded_model = load_latest_model_version()
+        loaded_model.fit(X, y)
+        store_latest_model_version(loaded_model)
+
+        return loaded_model
+        
+        
     def create_model_request(self):
         """
         Create a New CML Model Endpoint.
