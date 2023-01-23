@@ -45,6 +45,7 @@ from pprint import pprint
 import random
 import logging
 import yaml
+from yaml.loader import SafeLoader
 from packaging import version
 
 logger = logging.getLogger(__name__)
@@ -186,23 +187,28 @@ class CMLProjectManager:
         Create empty project-metadata.yaml file for the first time
         """
         
-        if not os.path.isfile("project-metadata.yaml"):
+        #if not os.path.isfile("project-metadata.yaml"):
 
-            with open("project-metadata.yaml", "a") as fo:
-                fo.write("---\n")
-                
-        sdump = "  " + yaml.dump(
+            #with open("project-metadata.yaml", "a") as fo:
+                #fo.write("---\n")
+
+        sdump = yaml.dump(
                     yaml_dict
                     ,indent=4
                     )
 
         with open("project-metadata.yaml", "a") as fo:
             fo.write(sdump)
+            
+        with open("project-metadata.yaml", "a") as fo:
+            fo.write("\n")
 
-    def create_yaml_job(self, job_body):
+    def create_yaml_job(self, jobResponse):
+      
+        job_id = 'Job_'+jobResponse['id']
         yaml_dict = {
-          'job': { 
-              'job_body': job_body,
+          job_id: { 
+              'job_body': jobResponse,
               'requirements': '/home/cdsw/requirements.txt',
               'last_updated_timestamp': time.time() * 1000
             }
@@ -210,7 +216,17 @@ class CMLProjectManager:
       
         return yaml_dict
       
-      
+    def read_proj_metadata(self, yaml_file):
+        # Open the file and load the file
+        with open(yaml_file, 'r') as f:
+            data = yaml.safe_load_all(f)#, Loader=yaml.Loader)
+            all_metadata = list(data)
+            print(all_metadata)
+            
+        return all_metadata
+    
+    
+    
       
     #def get_all_model_details(self):
     #    """

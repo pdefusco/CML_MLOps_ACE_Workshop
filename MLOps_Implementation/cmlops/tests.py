@@ -10,8 +10,11 @@ from MLOps_Implementation.cmlops import project_manager
 
 manager = project_manager.CMLProjectManager()
 listJobsResponse = manager.list_jobs()
-jobResponse = listJobsResponse['jobs'][0]
-jobBody = manager.create_job_body_from_jobresponse(jobResponse)
-jobBodyYaml = manager.create_yaml_job(jobBody)
+jobResponse = listJobsResponse['jobs'][1]
+#jobBody = manager.create_job_body_from_jobresponse(jobResponse)
+jobBodyYaml = manager.create_yaml_job(jobResponse)
 
 manager.update_project_metadata(jobBodyYaml)
+
+proj_metadata = manager.read_proj_metadata('/home/cdsw/project-metadata.yaml')
+
