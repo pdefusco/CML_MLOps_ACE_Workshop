@@ -38,9 +38,7 @@
 #
 # ###########################################################################
 
-import os
-import json
-import string
+import os, json, string, time
 import cmlapi
 from cmlapi.rest import ApiException
 from pprint import pprint
@@ -205,8 +203,8 @@ class CMLProjectManager:
         yaml_dict = {
           'job': { 
               'job_body': job_body,
-              'requirements': 'requirements_path',
-              'last_updated_timestamp': 'current_ts'
+              'requirements': '/home/cdsw/requirements.txt',
+              'last_updated_timestamp': time.time() * 1000
             }
         }
       

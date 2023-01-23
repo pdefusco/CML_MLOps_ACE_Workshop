@@ -22,3 +22,49 @@
         discriminator: null
     last_updated_timestamp: current_ts
     requirements: requirements_path
+  job:
+    job_body: !!python/object:cmlapi.models.create_job_request.CreateJobRequest
+        _arguments: null
+        _attachments: null
+        _cpu: 4.0
+        _environment: null
+        _kernel: null
+        _kill_on_timeout: null
+        _memory: 12.0
+        _name: MonitoringJob
+        _nvidia_gpu: null
+        _parent_job_id: null
+        _project_id: f96y-7e2i-xb6z-6suc
+        _recipients: null
+        _runtime_addon_identifiers:
+        - hadoop-cli-7.2.11-hf4-j8u342
+        _runtime_identifier: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.7-standard:2022.11.1-b2
+        _schedule: null
+        _script: 02_APIv2_Pipeline/01_Pipeline_MonitoringJob.py
+        _timeout: null
+        discriminator: null
+    last_updated_timestamp: current_ts
+    requirements: requirements_path
+  job:
+    job_body: !!python/object:cmlapi.models.create_job_request.CreateJobRequest
+        _arguments: null
+        _attachments: null
+        _cpu: 4.0
+        _environment: null
+        _kernel: null
+        _kill_on_timeout: null
+        _memory: 12.0
+        _name: MonitoringJob
+        _nvidia_gpu: null
+        _parent_job_id: null
+        _project_id: f96y-7e2i-xb6z-6suc
+        _recipients: null
+        _runtime_addon_identifiers:
+        - hadoop-cli-7.2.11-hf4-j8u342
+        _runtime_identifier: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.7-standard:2022.11.1-b2
+        _schedule: null
+        _script: 02_APIv2_Pipeline/01_Pipeline_MonitoringJob.py
+        _timeout: null
+        discriminator: null
+    last_updated_timestamp: 1674491689032.6257
+    requirements: /home/cdsw/requirements.txt
