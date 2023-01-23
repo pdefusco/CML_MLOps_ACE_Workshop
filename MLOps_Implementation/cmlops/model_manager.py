@@ -69,6 +69,7 @@ class CMLProductionModel:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
+
     def __init__(self, base_model_file_path, base_model_script_path, base_model_training_data_path, function_name):
         self.client = cmlapi.default_client()
         self.base_model_file_path = base_model_file_path
@@ -77,6 +78,7 @@ class CMLProductionModel:
         self.project_id = os.environ["CDSW_PROJECT_ID"]
         #self.model_name = model_name
         self.function_name = function_name
+
 
     def get_latest_deployment_details(self, model_name):
         """
@@ -134,6 +136,7 @@ class CMLProductionModel:
             "latest_deployment_crn": model_deployment_crn,
         }
 
+
     def get_latest_deployment_details_allmodels(self):
         """
         Given a APIv2 client object and Model Name, use APIv2 to retrieve details about the latest/current deployment.
@@ -190,6 +193,7 @@ class CMLProductionModel:
             "latest_deployment_crn": model_deployment_crn,
         }
 
+
     def get_latest_standard_runtime(self):
         """
         Use CML APIv2 to identify and return the latest version of a Python 3.7,
@@ -217,6 +221,7 @@ class CMLProductionModel:
             logger.info("No matching runtime available.")
             return None
 
+
     def get_all_model_endpoint_details(self):
         """
         Use CML APIv2 to collect all model details required to analyze model metrics
@@ -234,6 +239,7 @@ class CMLProductionModel:
         )
 
         return Model_AccessKey, Deployment_CRN, Model_CRN, model_endpoint
+
 
     def get_model_metrics(self, Model_CRN, Deployment_CRN, db_backup=False):
         """
@@ -265,6 +271,7 @@ class CMLProductionModel:
 
         return metrics_df
 
+
     def unravel_metrics_df(self, metrics_df):
         """
         Parse metrics_df outputting X, y, formatted for model training
@@ -277,6 +284,7 @@ class CMLProductionModel:
         X.columns = X.columns.str.replace('metrics.input_data.','')
 
         return X, y
+
 
     def load_latest_model_version(self, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
         """
@@ -293,7 +301,7 @@ class CMLProductionModel:
         loaded_model = pickle.load(open(latest_model_path, 'rb'))
 
         return loaded_model
-\
+
 
     def store_latest_model_version(self, loaded_model, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
         """
@@ -322,6 +330,30 @@ class CMLProductionModel:
         return loaded_model
 
 
+    def test_model_performance(self, metrics_df):
+        """
+        Determine if Model Performance is below expectations
+        """
+
+        # Do some conversions & calculations on the raw metrics
+        metrics_df["startTimeStampMs"] = pd.to_datetime(
+            metrics_df["startTimeStampMs"], unit="ms"
+        )
+        metrics_df["endTimeStampMs"] = pd.to_datetime(metrics_df["endTimeStampMs"], unit="ms")
+        metrics_df["processing_time"] = (
+            metrics_df["endTimeStampMs"] - metrics_df["startTimeStampMs"]
+        ).dt.microseconds * 1000
+
+        # Plot model accuracy drift over the simulated time period
+        agg_metrics = metrics_df.dropna(subset=["metrics.accuracy"]).sort_values("startTimeStampMs")
+
+        if agg_metrics.sort_values(by="metrics.accuracy", ascending=False)["metrics.accuracy"].iloc[-10:].mean() < 0.40:
+            test_result = True
+        else:
+            test_result = False
+
+        return test_result
+
     def create_model_request(self):
         """
         Create a New CML Model Endpoint.
@@ -338,6 +370,7 @@ class CMLProductionModel:
 
         return modelReq
 
+
     def create_model_endpoint(self, modelReq):
         """
         Create a New CML Model Endpoint.
@@ -347,6 +380,7 @@ class CMLProductionModel:
         model = self.client.create_model(modelReq, self.project_id)
 
         return model
+
 
     def create_model_build_request(self, model, runtime_id):
         """
@@ -367,6 +401,7 @@ class CMLProductionModel:
 
         return model_build_request
 
+
     def create_model_build(self, model, model_build_request):
         """
         Create a New CML Model Build.
@@ -379,6 +414,7 @@ class CMLProductionModel:
         )
 
         return modelBuild
+
 
     def create_model_deployment_request(self, model, modelBuild, cpu, mem):
         """
@@ -396,6 +432,7 @@ class CMLProductionModel:
         )
 
         return model_deployment
+
 
     def create_model_deployment(self, model_deployment, model_id, build_id):
         """

@@ -62,7 +62,7 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-class CMLProjectManager:
+class CMLModelManager:
 
     """A class for managing CML Project resources with CML API_v2
     This class contains methods that wrap API_v2 to
@@ -171,12 +171,12 @@ class CMLProjectManager:
 
         return job_instance
 
-    def run_job(self, job_body, job_instance):
+    def run_job(self, job_body, job_id):
         """
         Run a Job via APIv2 given an APIv2 client object, Job Body and Job Create Instance.
         This function only works for models deployed within the current project.
         """
-        job_run = self.client.create_job_run(job_body, self.project_id, job_instance.id)
+        job_run = self.client.create_job_run(job_body, self.project_id, job_id)
         print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
 
         return job_run
