@@ -61,7 +61,7 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-class CMLProductionModel:
+class CMLModelManager:
     """A class for managing CML Production Deployments with CML API_v2
     This class contains methods that wrap API_v2 to achieve specific
     needs that facilitate the creation and productionization of a Model Pipeline.

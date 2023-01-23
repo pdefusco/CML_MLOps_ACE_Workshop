@@ -45,16 +45,22 @@ from pprint import pprint
 import random
 import logging
 from packaging import version
-from MLOps_Implementation.cmlops import project_manager
+from MLOps_Implementation.cmlops import project_manager, model_manager
 
-manager = project_manager.CMLProjectManager()
-listJobsResponse = manager.list_jobs()
-jobResponse = listJobsResponse['jobs'][1]
+# Model Constructor Inputs
+base_model_file_path = "/home/cdsw/MLOps_Implementation/models/development_model.sav"
+base_model_script_path = "/home/cdsw/MLOps_Implementation/data/X_train.csv"
+base_model_training_data_path = "/home/cdsw/MLOps_Implementation/model_endpoint.py"
+function_name = "predict"
 
-jobBodyYaml = manager.create_yaml_job(jobResponse)
+# Instantiating Project and Model Managers
+projManager = project_manager.CMLProjectManager()
+modelManager = model_manager.CMLModelManager(base_model_file_path, base_model_script_path, base_model_training_data_path, function_name)
 
-manager.update_project_metadata(jobBodyYaml)
+# Retraining Model
+X, y = modelManager.unravel_metrics_df(metrics_df)
+loaded_model_file = modelManager.load_latest_model_version(model_dir="/home/cdsw/MLOps_Implementation/models")
+loaded_model_clf = modelManager.train_latest_model_version(loaded_model_file, X, y)
 
-proj_metadata = manager.read_proj_metadata('/home/cdsw/project-metadata.yaml')
-
-jobBody = manager.create_job_body_from_jobresponse(proj_metadata[0])
+# Store latest Model
+modelManager.store_latest_model_version(loaded_model_clf, model_dir="/home/cdsw/MLOps_Implementation/models")

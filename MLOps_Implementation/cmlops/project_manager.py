@@ -62,7 +62,7 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-class CMLModelManager:
+class CMLProjectManager:
 
     """A class for managing CML Project resources with CML API_v2
     This class contains methods that wrap API_v2 to
