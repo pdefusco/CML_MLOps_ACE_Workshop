@@ -233,6 +233,101 @@ class CMLModelManager:
 
         return job_bodies
 
+    def create_model_request(self):
+        """
+        Create a New CML Model Endpoint.
+        This function only works for models deployed within the current project.
+        """
+
+        rand_id = "".join([random.choice(string.ascii_lowercase) for _ in range(6)])
+        modelReq = cmlapi.CreateModelRequest(
+            name = "demo-model-" + rand_id,
+            description = "model created for demo",
+            project_id = project_id,
+            disable_authentication = True
+        )
+
+        return modelReq
+
+
+    def create_model_endpoint(self, modelReq):
+        """
+        Create a New CML Model Endpoint.
+        This function only works for models deployed within the current project.
+        """
+
+        model = self.client.create_model(modelReq, self.project_id)
+
+        return model
+
+
+    def create_model_build_request(self, model, runtime_id):
+        """
+        Create a New CML Model Build Request.
+        Requires a Model Endpoint.
+        This function only works for models deployed within the current project.
+        """
+
+        model_build_request = cmlapi.CreateModelBuildRequest(
+            project_id = project_id,
+            model_id = model.id,
+            comment = "test comment",
+            file_path = self.base_model_file_path,
+            function_name = self.function_name,
+            kernel = "python3",
+            runtime_identifier = runtime_id
+        )
+
+        return model_build_request
+
+
+    def create_model_build(self, model, model_build_request):
+        """
+        Create a New CML Model Build.
+        Requires a Model Build Request object and a Model Endpoint object.
+        This function only works for models deployed within the current project.
+        """
+
+        modelBuild = client.create_model_build(
+            model_build_request, self.project_id, model.id
+        )
+
+        return modelBuild
+
+
+    def create_model_deployment_request(self, model, modelBuild, cpu, mem):
+        """
+        Create a New CML Model Deployment Request.
+        Requires a Model Build object and a Model Endpoint object.
+        This function only works for models deployed within the current project.
+        """
+
+        model_deployment = cmlapi.CreateModelDeploymentRequest(
+            project_id = self.project_id,
+            model_id = model.id,
+            build_id = modelBuild.id,
+            cpu = cpu,
+            memory = mem
+        )
+
+        return model_deployment
+
+
+    def create_model_deployment(self, model_deployment, model_id, build_id):
+        """
+        Create a New CML Model Deployment.
+        Requires a Model Deployment Request, a Model Build object and a Model Endpoint object.
+        This function only works for models deployed within the current project.
+        """
+
+        model_deployment_response = client.create_model_deployment(
+                model_deployment,
+                project_id = self.project_id,
+                model_id = model.id,
+                build_id = modelBuild.id
+            )
+
+        return model_deployment_response
 
     #def get_all_model_details(self):
     #    """

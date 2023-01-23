@@ -20,8 +20,6 @@ def load_latest_model_version():
 
     return loaded_model
 
-
-
 customer_behavior_model = load_latest_model_version()
 
 #Inputs:
