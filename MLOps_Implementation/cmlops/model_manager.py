@@ -69,12 +69,12 @@ class CMLProductionModel:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
-    def __init__(self, base_model_file_path, base_model_script_path, base_model_training_data_path, project_id, function_name):
+    def __init__(self, base_model_file_path, base_model_script_path, base_model_training_data_path, function_name):
         self.client = cmlapi.default_client()
         self.base_model_file_path = base_model_file_path
         self.base_model_script_path = base_model_script_path
         self.base_model_training_data_path = base_model_training_data_path
-        self.project_id = project_id
+        self.project_id = os.environ["CDSW_PROJECT_ID"]
         #self.model_name = model_name
         self.function_name = function_name
 
@@ -277,7 +277,7 @@ class CMLProductionModel:
         X.columns = X.columns.str.replace('metrics.input_data.','')
 
         return X, y
-      
+
     def load_latest_model_version(self, model_dir="/home/cdsw/01_ML_Project_Basics/models"):
         """
         Load the latest model version in the project.
@@ -308,20 +308,20 @@ class CMLProductionModel:
 
         print("Model backed up with path {}".format(filename))
 
-        
+
     def train_latest_model_version(self, loaded_model, X, y):
         """
         Load the latest model version in the project.
         This function only works for models deployed within the current project.
         """
-        
+
         loaded_model = load_latest_model_version()
         loaded_model.fit(X, y)
         store_latest_model_version(loaded_model)
 
         return loaded_model
-        
-        
+
+
     def create_model_request(self):
         """
         Create a New CML Model Endpoint.

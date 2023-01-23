@@ -146,7 +146,7 @@ class CMLProjectManager:
         """
         Create a Job Body with an instance of Job type as input.
         This function helps you reproduce a Job from one Project to Another.
-        """  
+        """
         job_body = cmlapi.CreateJobRequest(
             project_id = self.project_id,
             name = jobResponse["name"],
@@ -158,7 +158,7 @@ class CMLProjectManager:
         )
         print("Job Body for Job {}: ".format(job_body.name))
         print(job_body)
-        
+
         return job_body
 
     def create_job(self, job_body):
@@ -179,16 +179,12 @@ class CMLProjectManager:
         job_run = self.client.create_job_run(job_body, self.project_id, job_instance.id)
         print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
 
-        return job_run  
-      
+        return job_run
+
     def update_project_metadata(self, yaml_dict):
         """
         Create empty project-metadata.yaml file for the first time
         """
-        #if not os.path.isfile("project-metadata.yaml"):
-
-            #with open("project-metadata.yaml", "a") as fo:
-                #fo.write("---\n")
 
         sdump = yaml.dump(
                     yaml_dict
@@ -197,23 +193,23 @@ class CMLProjectManager:
 
         with open("project-metadata.yaml", "a") as fo:
             fo.write(sdump)
-            
+
         with open("project-metadata.yaml", "a") as fo:
             fo.write("\n")
 
     def create_yaml_job(self, jobResponse):
-      
+
         job_id = 'Job_'+jobResponse['id']
         yaml_dict = {
-          job_id: { 
+          job_id: {
               'job_response': jobResponse,
               'requirements': '/home/cdsw/requirements.txt',
               'last_updated_timestamp': time.time() * 1000
             }
         }
-      
+
         return yaml_dict
-      
+
     def read_proj_metadata(self, yaml_file):
         """
         Parse project metadata yaml so project artifacts can be reproduced in same or new project.
@@ -222,9 +218,9 @@ class CMLProjectManager:
             data = list(yaml.safe_load_all(f))#, Loader=yaml.Loader)
             all_metadata = list(data[0].items())
             print(all_metadata)
-            
+
         return all_metadata
-    
+
     def create_jobbodies_from_proj_metadata(self, proj_metadata):
         """
         Use project metadata to create job bodies for create job requests.
