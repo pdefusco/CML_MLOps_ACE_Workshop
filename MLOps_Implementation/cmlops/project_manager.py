@@ -176,7 +176,6 @@ class CMLProjectManager:
         Run a Job via APIv2 given an APIv2 client object, Job Body and Job Create Instance.
         This function only works for models deployed within the current project.
         """
-
         job_run = self.client.create_job_run(job_body, self.project_id, job_instance.id)
         print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
 
@@ -186,7 +185,6 @@ class CMLProjectManager:
         """
         Create empty project-metadata.yaml file for the first time
         """
-        
         #if not os.path.isfile("project-metadata.yaml"):
 
             #with open("project-metadata.yaml", "a") as fo:
@@ -208,7 +206,7 @@ class CMLProjectManager:
         job_id = 'Job_'+jobResponse['id']
         yaml_dict = {
           job_id: { 
-              'job_body': jobResponse,
+              'job_response': jobResponse,
               'requirements': '/home/cdsw/requirements.txt',
               'last_updated_timestamp': time.time() * 1000
             }
@@ -217,17 +215,29 @@ class CMLProjectManager:
         return yaml_dict
       
     def read_proj_metadata(self, yaml_file):
-        # Open the file and load the file
+        """
+        Parse project metadata yaml so project artifacts can be reproduced in same or new project.
+        """
         with open(yaml_file, 'r') as f:
-            data = yaml.safe_load_all(f)#, Loader=yaml.Loader)
-            all_metadata = list(data)
+            data = list(yaml.safe_load_all(f))#, Loader=yaml.Loader)
+            all_metadata = list(data[0].items())
             print(all_metadata)
             
         return all_metadata
     
-    
-    
-      
+    def create_jobbodies_from_proj_metadata(self, proj_metadata):
+        """
+        Use project metadata to create job bodies for create job requests.
+        """
+        job_bodies = []
+        for i in range(len(proj_metadata)):
+          print(proj_metadata[i][1]['job_body'])
+          jobResponse = proj_metadata[i][1]['job_body']
+          job_bodies.append(manager.create_job_body_from_jobresponse(jobResponse))
+
+        return job_bodies
+
+
     #def get_all_model_details(self):
     #    """
     #    Create a metadata representation of all jobs and related artifacts as of time of execution.
