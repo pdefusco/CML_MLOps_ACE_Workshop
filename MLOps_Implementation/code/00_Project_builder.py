@@ -47,14 +47,16 @@ import logging
 from packaging import version
 from MLOps_Implementation.cmlops import project_manager
 
-manager = project_manager.CMLProjectManager()
-listJobsResponse = manager.list_jobs()
+projManager = project_manager.CMLProjectManager()
+listJobsResponse = projManager.list_jobs()
 jobResponse = listJobsResponse['jobs'][1]
+pprint(jobResponse)
 
-jobBodyYaml = manager.create_yaml_job(jobResponse)
+for jobResponse in range(len(listJobsResponse['jobs'])):
+  jobBodyYaml = projManager.create_yaml_job(listJobsResponse['jobs'][jobResponse])
+  projManager.update_project_metadata(jobBodyYaml)
+  
+proj_metadata = projManager.read_proj_metadata('/home/cdsw/project-metadata.yaml')
+pprint(proj_metadata)
 
-manager.update_project_metadata(jobBodyYaml)
-
-proj_metadata = manager.read_proj_metadata('/home/cdsw/project-metadata.yaml')
-
-jobBody = manager.create_job_body_from_jobresponse(proj_metadata[0])
+#jobBody = manager.create_job_body_from_jobresponse(proj_metadata[0])
