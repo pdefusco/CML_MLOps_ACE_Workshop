@@ -61,7 +61,7 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-class CMLGitAPI:
+class GITManager:
     """A class for interacting with GitHub from CML Projects
     This class contains methods that wrap API_v2 and the PyGithub libs to
     facilitate the first-time creation, backing up and/or redeployment of a CML Project in a new Workspace/Project.
@@ -74,13 +74,13 @@ class CMLGitAPI:
         self.g = Github(os.environ['git_token'])
         self.repo_name = os.environ['git_repo_name']
         self.repo = self.g.get_repo(os.environ['git_repo_name'])
-        
+
     def git_backup(self, filepath):
         """
         Add, commit and push designated project artifacts.
         """
         self.repo.create_file(filepath, "backing up file", "content_of_file", branch="main")
-    
+
         return None
 
     def show_repo_contents(self, repo_dir=""):
@@ -88,26 +88,16 @@ class CMLGitAPI:
         Show current directories and files in Git repo
         """
         contents = repo.get_contents(repo_dir)
-        
+
         for content_file in contents:
             print(content_file)
-            
+
         return None
 
     def show_repo_commits(self):
         """
         Show repo commits
         """
-      
+
         for commit in repo.get_commits():
           print(commit)
-      
-# Github Enterprise with custom hostname
-#g = Github(base_url="https://pdefusco/api/v3", login_or_token=os.environ['git_token'])
-    
-gitManager = CMLGitAPI()
-
-filepath = 'models/final_model_9999.txt'
-
-gitManager.git_backup(filepath)
-    
