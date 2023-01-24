@@ -256,7 +256,7 @@ class CMLProjectManager:
         modelReq = cmlapi.CreateModelRequest(
             name = "demo-model-" + rand_id,
             description = "model created for demo",
-            project_id = project_id,
+            project_id = self.project_id,
             disable_authentication = True
         )
 
@@ -274,7 +274,7 @@ class CMLProjectManager:
         return model
 
 
-    def create_model_build_request(self, model, runtime_id):
+    def create_model_build_request(self, modelId, runtimeId):
         """
         Create a New CML Model Build Request.
         Requires a Model Endpoint.
@@ -283,18 +283,18 @@ class CMLProjectManager:
 
         model_build_request = cmlapi.CreateModelBuildRequest(
             project_id = project_id,
-            model_id = model.id,
+            model_id = modelId,
             comment = "test comment",
             file_path = self.base_model_file_path,
             function_name = self.function_name,
             kernel = "python3",
-            runtime_identifier = runtime_id
+            runtime_identifier = runtimeId
         )
 
-        return model_build_request
+        return modelBuildRequest
 
 
-    def create_model_build(self, model, model_build_request):
+    def create_model_build(self, modelId, model_build_request):
         """
         Create a New CML Model Build.
         Requires a Model Build Request object and a Model Endpoint object.
@@ -302,13 +302,13 @@ class CMLProjectManager:
         """
 
         modelBuild = client.create_model_build(
-            model_build_request, self.project_id, model.id
+            model_build_request, self.project_id, modelId
         )
 
         return modelBuild
 
 
-    def create_model_deployment_request(self, model, modelBuild, cpu, mem):
+    def create_model_deployment_request(self, modelId, modelBuildId, cpu, mem):
         """
         Create a New CML Model Deployment Request.
         Requires a Model Build object and a Model Endpoint object.
@@ -317,16 +317,16 @@ class CMLProjectManager:
 
         model_deployment = cmlapi.CreateModelDeploymentRequest(
             project_id = self.project_id,
-            model_id = model.id,
-            build_id = modelBuild.id,
+            model_id = modelId,
+            build_id = modelBuildId,
             cpu = cpu,
             memory = mem
         )
 
-        return model_deployment
+        return modelDeploymentRequest
 
 
-    def create_model_deployment(self, model_deployment, model_id, build_id):
+    def create_model_deployment(self, modelDeploymentRequest, modelId, buildId):
         """
         Create a New CML Model Deployment.
         Requires a Model Deployment Request, a Model Build object and a Model Endpoint object.
@@ -334,13 +334,13 @@ class CMLProjectManager:
         """
 
         model_deployment_response = client.create_model_deployment(
-                model_deployment,
+                modelDeploymentRequest,
                 project_id = self.project_id,
-                model_id = model.id,
-                build_id = modelBuild.id
+                model_id = modelId,
+                build_id = buildId
             )
 
-        return model_deployment_response
+        return modelDeploymentResponse
 
     #def get_all_model_details(self):
     #    """
