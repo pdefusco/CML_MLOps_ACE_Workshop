@@ -207,18 +207,16 @@ class CMLProjectManager:
             fo.write("\n")
 
 
-    def create_yaml_job(self, jobResponse):
-
-        job_id = 'Job_'+jobResponse['id']
-        yaml_dict = {
-          job_id: {
-              'job_response': jobResponse,
-              'requirements': '/home/cdsw/requirements.txt',
-              'last_updated_timestamp': time.time() * 1000
-            }
-        }
-
-        return yaml_dict
+    def remove_project_metadata(self, base_path='/home/cdsw', file_name='project-metadata.yaml'):
+        """
+        Remove current project-metadata.yaml file for the first time
+        Assumes the file is named project-metadata.yaml and the path is /home/cdsw/
+        """
+        print("Directory Contents before File Removal")
+        print(os.listdir(base_path))
+        os.remove(base_path+file_name)
+        print("Directory Contents after File Removal")
+        print(os.listdir(base_path))
 
 
     def read_proj_metadata(self, yaml_file):
@@ -231,6 +229,22 @@ class CMLProjectManager:
             print(all_metadata)
 
         return all_metadata
+        
+
+    def create_yaml_job(self, jobResponse):
+        """
+        Create YAML snippet for a single job based on jobResponse instance
+        """
+        job_id = 'Job_'+jobResponse['id']
+        yaml_dict = {
+          job_id: {
+              'job_response': jobResponse,
+              'requirements': '/home/cdsw/requirements.txt',
+              'last_updated_timestamp': time.time() * 1000
+            }
+        }
+
+        return yaml_dict
 
 
     def create_jobbodies_from_proj_metadata(self, proj_metadata):
