@@ -251,10 +251,10 @@ class CMLProjectManager:
         """
         Create YAML snippet for a single job based on jobResponse instance
         """
-        job_id = 'Job_'+jobResponse['id']
+        jobId = 'Job_'+jobResponse['id']
         job_yaml_dict = {
-          job_id: {
-              'job_response': jobResponse,
+          jobId: {
+              'jobResponse': jobResponse,
               'requirements': '/home/cdsw/requirements.txt',
               'last_updated_timestamp': time.time() * 1000
             }
@@ -267,6 +267,14 @@ class CMLProjectManager:
         """
         Create YAML snippet for a single model based on modelResponse instance
         """
+        modelId = 'Model_'+modelResponse['id']
+        model_yaml_dict = {
+          modelId: {
+              'modelResponse': jobResponse,
+              'requirements': '/home/cdsw/requirements.txt',
+              'last_updated_timestamp': time.time() * 1000
+            }
+        }
 
         return model_yaml_dict
 
