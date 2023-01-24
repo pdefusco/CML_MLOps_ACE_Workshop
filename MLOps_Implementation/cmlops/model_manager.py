@@ -300,7 +300,7 @@ class CMLModelManager:
 
         loaded_model_clf = pickle.load(open(latest_model_path, 'rb'))
 
-        return loaded_model_clf
+        return loaded_model_clf, latest_model_path
 
 
     def store_latest_model_version(self, loaded_model_clf, model_dir="/home/cdsw/01_ML_Project_Basics/models"):

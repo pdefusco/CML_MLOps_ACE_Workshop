@@ -44,6 +44,7 @@ import string
 import cmlapi
 import random
 import logging
+from github import Github
 from packaging import version
 
 logger = logging.getLogger(__name__)
@@ -68,11 +69,45 @@ class CMLGitAPI:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
-    def __init__(self, git_username, git_pwd, cml_workspace_url, project_id, function_name):
+    def __init__(self):
+        self.token = os.environ['git_token']
+        self.g = Github(os.environ['git_token'])
+        self.repo_name = os.environ['git_repo_name']
+        self.repo = self.g.get_repo(os.environ['git_repo_name'])
+        
+    def git_backup(self, filepath):
+        """
+        Add, commit and push designated project artifacts.
+        """
+        self.repo.create_file(filepath, "backing up file", "content_of_file", branch="main")
+    
+        return None
 
+    def show_repo_contents(self, repo_dir=""):
+        """
+        Show current directories and files in Git repo
+        """
+        contents = repo.get_contents(repo_dir)
+        
+        for content_file in contents:
+            print(content_file)
+            
+        return None
 
-    def git_add_commit(self):
-    """
-    Add and commit latest project artifacts.
-    """
-    return None
+    def show_repo_commits(self):
+        """
+        Show repo commits
+        """
+      
+        for commit in repo.get_commits():
+          print(commit)
+      
+# Github Enterprise with custom hostname
+#g = Github(base_url="https://pdefusco/api/v3", login_or_token=os.environ['git_token'])
+    
+gitManager = CMLGitAPI()
+
+filepath = 'models/final_model_9999.txt'
+
+gitManager.git_backup(filepath)
+    

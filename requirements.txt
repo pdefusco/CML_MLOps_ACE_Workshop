@@ -11,3 +11,4 @@ numpy==1.17.2
 flask_cors
 imblearn
 yellowbrick
+PyGithub
