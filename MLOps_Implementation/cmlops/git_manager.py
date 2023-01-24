@@ -60,7 +60,7 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-class CMLGitWrapper:
+class CMLGitAPI:
     """A class for interacting with GitHub from CML Projects
     This class contains methods that wrap API_v2 and the PyGithub libs to
     facilitate the first-time creation, backing up and/or redeployment of a CML Project in a new Workspace/Project.
@@ -71,8 +71,8 @@ class CMLGitWrapper:
     def __init__(self, git_username, git_pwd, cml_workspace_url, project_id, function_name):
 
 
-    def git_backup():
+    def git_add_commit(self):
     """
-    Push the project to GitHub with the Python Github Wrapper.
+    Add and commit latest project artifacts.
     """
     return None
