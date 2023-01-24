@@ -230,7 +230,12 @@ class CMLProjectManager:
         """
         print("Directory Contents before File Removal")
         print(os.listdir(base_path))
-        os.remove(base_path+file_name)
+        
+        try:
+          os.remove(base_path + "/" + file_name)
+        except:
+          print("File not found")
+        
         print("Directory Contents after File Removal")
         print(os.listdir(base_path))
 
