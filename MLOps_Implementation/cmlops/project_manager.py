@@ -342,6 +342,21 @@ class CMLProjectManager:
 
         return modelDeploymentResponse
 
+
+    def create_backup_dir(self, backup_path, base_model_script_path, base_model_training_data_path, loaded_model_clf):
+        """
+        Create a new Dir in the CML Project folders in order to back up model deployment artifacts.
+        Creates a copy of the model script, the training data, and the model estimator.
+        """
+        os.mkdir(backup_path)
+        shutil.copyfile(base_model_script_path, backup_path)
+        shutil.copyfile(base_model_training_data_path, backup_path)
+        modelManager.store_latest_model_version(loaded_model_clf, backup_path)
+        print("Model Artifacts Backed Up to path: {}", backup_path)
+        print(os.listdir(backup_path))
+
+        return os.listdir(backup_path)
+
     #def get_all_model_details(self):
     #    """
     #    Create a metadata representation of all jobs and related artifacts as of time of execution.

@@ -45,7 +45,7 @@ from pprint import pprint
 import random
 import logging
 from packaging import version
-from MLOps_Implementation.cmlops import project_manager, model_manager
+from MLOps_Implementation.cmlops import project_manager, model_manager, git_manager
 import shutil
 
 # Model Constructor Inputs
@@ -57,6 +57,8 @@ function_name = "predict"
 # Instantiating Project and Model Managers
 projManager = project_manager.CMLProjectManager()
 modelManager = model_manager.CMLModelManager(base_model_file_path, base_model_script_path, base_model_training_data_path, function_name)
+gitManager = git_manager.GITManager()
+
 
 modelId = modelManager.get_latest_deployment_details_allmodels()["model_id"]
 buildId = modelManager.get_latest_deployment_details_allmodels()["latest_build_id"]
@@ -71,15 +73,10 @@ modelDeploymentResponse = modelManager.create_model_deployment(modelDeploymentRe
 
 # Backup to Git
 
-backup_base_path = 'deployment_backup_' + str(now)
+backup_path = '/home/cdse/deployment_backup_' + str(now)
 
-os.mkdir(backup_base_path)
-shutil.copyfile(base_model_script_path, backup_base_path)
-shutil.copyfile(base_model_training_data_path, backup_base_path)
-modelManager.store_latest_model_version(loaded_model_clf, backup_base_path)
+backup_files = reate_backup_dir(backup_path, base_model_script_path, base_model_training_data_path, loaded_model_clf)
 
-files = os.listdir(backup_base_path)
-
-for file in files:
-    gitManager = CMLGitAPI()
-    gitManager.git_backup(backup_base_path)
+for file in backup_files:
+    full_backup_path = backup_path + file
+    gitManager.git_backup(full_backup_path)
