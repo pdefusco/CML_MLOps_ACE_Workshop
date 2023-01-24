@@ -91,16 +91,16 @@ modelBuild = client.create_model_build(
 )
 
 model_deployment = cmlapi.CreateModelDeploymentRequest(
-        project_id = project_id, 
-        model_id = model.id, 
-        build_id = modelBuild.id, 
+        project_id = project_id,
+        model_id = model.id,
+        build_id = modelBuild.id,
         cpu = 1.00,
         memory = 2.00
     )
 
 model_deployment_response = client.create_model_deployment(
-        model_deployment, 
-        project_id = project_id, 
-        model_id = model.id, 
+        model_deployment,
+        project_id = project_id,
+        model_id = model.id,
         build_id = modelBuild.id
     )

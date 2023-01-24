@@ -56,3 +56,13 @@ function_name = "predict"
 # Instantiating Project and Model Managers
 projManager = project_manager.CMLProjectManager()
 modelManager = model_manager.CMLModelManager(base_model_file_path, base_model_script_path, base_model_training_data_path, function_name)
+
+modelId = modelManager.get_latest_deployment_details_allmodels()["model_id"]
+buildId = modelManager.get_latest_deployment_details_allmodels()["latest_build_id"]
+
+# Redeploy existing model
+cpu = 2.00
+mem = 4.00
+
+modelDeploymentRequest = modelManager.create_model_deployment_request(modelId, modelBuildId, cpu, mem)
+modelDeploymentResponse = modelManager.create_model_deployment(modelDeploymentRequest, modelId, buildId)
