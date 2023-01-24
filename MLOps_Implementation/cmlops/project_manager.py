@@ -113,7 +113,7 @@ class CMLProjectManager:
     def list_job_runs(self, jobId):
         """
         List all Project Job Runs.
-        The representation can be used to easily reproduce project artifacts in other environments.
+        The representation can be used to easily reproduce job-related project artifacts in other environments.
         Returns a response with an instance of type ListJobRunsResponse.
         """
         try:
@@ -124,6 +124,22 @@ class CMLProjectManager:
             print("Exception when calling CMLServiceApi->list_job_runs: %s\n" % e)
 
         return listJobRunsResponse
+
+
+    def list_models(self):
+        """
+        List all Project Models (Active or Inactive e.g. in stopped state).
+        The representation can be used to easily reproduce model-related project artifacts in other environments.
+        Returns a response with an instance of type ListModelsResponse.
+        """
+        try:
+            # List models, optionally filtered, sorted, and paginated.
+            listModelsResponse = self.client.list_models(self.project_id)
+            pprint(listModelsResponse)
+        except ApiException as e:
+            print("Exception when calling CMLServiceApi->list_models: %s\n" % e)
+
+        return listModelsResponse
 
 
     def create_job_body_from_scratch(self, job_name, script, cpu, mem, parent_job, runtimeId, *runtime_addon_ids):
@@ -229,14 +245,14 @@ class CMLProjectManager:
             print(all_metadata)
 
         return all_metadata
-        
 
-    def create_yaml_job(self, jobResponse):
+
+    def create_job_yaml(self, jobResponse):
         """
         Create YAML snippet for a single job based on jobResponse instance
         """
         job_id = 'Job_'+jobResponse['id']
-        yaml_dict = {
+        job_yaml_dict = {
           job_id: {
               'job_response': jobResponse,
               'requirements': '/home/cdsw/requirements.txt',
@@ -244,8 +260,15 @@ class CMLProjectManager:
             }
         }
 
-        return yaml_dict
+        return job_yaml_dict
 
+
+    def create_model_yaml(self, modelResponse):
+        """
+        Create YAML snippet for a single model based on modelResponse instance
+        """
+
+        return model_yaml_dict
 
     def create_jobbodies_from_proj_metadata(self, proj_metadata):
         """

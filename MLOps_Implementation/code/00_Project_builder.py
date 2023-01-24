@@ -53,9 +53,9 @@ jobResponse = listJobsResponse['jobs'][1]
 pprint(jobResponse)
 
 for jobResponse in range(len(listJobsResponse['jobs'])):
-  jobBodyYaml = projManager.create_yaml_job(listJobsResponse['jobs'][jobResponse])
+  jobBodyYaml = projManager.create_job_yaml(listJobsResponse['jobs'][jobResponse])
   projManager.update_project_metadata(jobBodyYaml)
-  
+
 proj_metadata = projManager.read_proj_metadata('/home/cdsw/project-metadata.yaml')
 pprint(proj_metadata)
 
