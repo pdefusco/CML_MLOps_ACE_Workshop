@@ -78,7 +78,7 @@ class CMLProjectManager:
         self.client = cmlapi.default_client()
 
 
-    def get_job(self, job_id):
+    def get_job(self, jobId):
         """
         Get Job based on Job ID.
         The representation can be used to easily reproduce project artifacts in other environments.
@@ -86,7 +86,7 @@ class CMLProjectManager:
         """
         try:
             # Return one job.
-            jobResponse = self.client.get_job(self.project_id, job_id, async_req=True).get().to_dict()
+            jobResponse = self.client.get_job(self.project_id, jobId, async_req=True).get().to_dict()
             pprint(jobResponse)
         except ApiException as e:
             print("Exception when calling CMLServiceApi->get_job: %s\n" % e)
@@ -110,7 +110,7 @@ class CMLProjectManager:
         return listJobsResponse
 
 
-    def list_job_runs(self, job_id):
+    def list_job_runs(self, jobId):
         """
         List all Project Job Runs.
         The representation can be used to easily reproduce project artifacts in other environments.
@@ -118,7 +118,7 @@ class CMLProjectManager:
         """
         try:
             # Lists job runs, optionally filtered, sorted, and paginated.
-            listJobRunsResponse = self.client.list_job_runs(project_id, job_id, async_req=True).get().to_dict()
+            listJobRunsResponse = self.client.list_job_runs(self.project_id, jobId, async_req=True).get().to_dict()
             pprint(listJobRunsResponse)
         except ApiException as e:
             print("Exception when calling CMLServiceApi->list_job_runs: %s\n" % e)
@@ -126,7 +126,7 @@ class CMLProjectManager:
         return listJobRunsResponse
 
 
-    def create_job_body_from_scratch(self, job_name, script, cpu, mem, parent_job, runtime_id, *runtime_addon_ids):
+    def create_job_body_from_scratch(self, job_name, script, cpu, mem, parent_job, runtimeId, *runtime_addon_ids):
         """
         Create a Job Request Body via APIv2 given an APIv2 client object and Job Details.
         This function only works for models deployed within the current project.
@@ -138,14 +138,14 @@ class CMLProjectManager:
             script = script,
             cpu = cpu,
             memory = mem,
-            runtime_identifier = runtime_id,
+            runtime_identifier = runtimeId,
             runtime_addon_identifiers = list(runtime_addon_ids)
         )
 
-        print("Job Body for Job {}: ".format(job_body.name))
-        print(job_body)
+        print("Job Body for Job {}: ".format(jobBody.name))
+        print(jobBody)
 
-        return job_body
+        return jobBody
 
 
     def create_job_body_from_jobresponse(self, jobResponse):
@@ -162,24 +162,24 @@ class CMLProjectManager:
             runtime_identifier = jobResponse["runtime_identifier"],
             runtime_addon_identifiers = jobResponse["runtime_addon_identifiers"]
         )
-        print("Job Body for Job {}: ".format(job_body.name))
-        print(job_body)
+        print("Job Body for Job {}: ".format(jobBody.name))
+        print(jobBody)
 
-        return job_body
+        return jobBody
 
 
-    def create_job(self, job_body):
+    def create_job(self, jobBody):
         """
         Create a Job via APIv2 given an APIv2 client object and Job Body.
         This function only works for models deployed within the current project.
         """
-        job_instance = client.create_job(job_body, self.project_id)
+        job_instance = client.create_job(jobBody, self.project_id)
         print("Job Instance with Name {} Created Successfully".format(job_body.name))
 
-        return job_instance
+        return jobInstance
 
 
-    def run_job(self, job_body, job_id):
+    def run_job(self, jobBody, jobId):
         """
         Run a Job via APIv2 given an APIv2 client object, Job Body and Job Create Instance.
         This function only works for models deployed within the current project.
@@ -187,7 +187,7 @@ class CMLProjectManager:
         job_run = self.client.create_job_run(job_body, self.project_id, job_id)
         print("Job {0} Run with Run ID {1}".format(job_body.name, job_run.id))
 
-        return job_run
+        return jobRun
 
 
     def update_project_metadata(self, yaml_dict):
