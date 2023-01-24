@@ -52,15 +52,16 @@ listJobsResponse = projManager.list_jobs()
 jobResponse = listJobsResponse['jobs'][1]
 pprint(jobResponse)
 
-proj_metadata_yaml_path = 'home/cdsw/project-metadata.yaml'
+proj_metadata_yaml_path = '/home/cdsw/project-metadata.yaml'
 
 if os.path.exists(proj_metadata_yaml_path):
   projManager.remove_project_metadata()
   
-  
 for jobResponse in range(len(listJobsResponse['jobs'])):
   jobBodyYaml = projManager.create_job_yaml(listJobsResponse['jobs'][jobResponse])
   projManager.update_project_metadata(jobBodyYaml)
+  
+ListModelResponse = projManager.list_models()
 
 proj_metadata = projManager.read_proj_metadata(proj_metadata_yaml_path)
 pprint(proj_metadata)

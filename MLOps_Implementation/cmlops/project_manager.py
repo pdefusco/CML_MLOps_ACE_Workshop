@@ -134,7 +134,7 @@ class CMLProjectManager:
         """
         try:
             # List models, optionally filtered, sorted, and paginated.
-            listModelsResponse = self.client.list_models(self.project_id)
+            listModelsResponse = self.client.list_models(self.project_id).get().to_dict()
             pprint(listModelsResponse)
         except ApiException as e:
             print("Exception when calling CMLServiceApi->list_models: %s\n" % e)
