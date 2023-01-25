@@ -215,7 +215,7 @@ class CMLProjectManager:
             runtime_addon_identifiers = modelResponse["runtime_addon_identifiers"]
             creator_name = modelResponse["creator"]["name"]
         )
-        print("Model Body for Model {}: ".format(modelBody.name))
+        print("Model Body for Model CRN: {}: ".format(crn))
         print(modelBody)
 
         return modelBody
@@ -227,7 +227,7 @@ class CMLProjectManager:
         This function only works for models deployed within the current project.
         """
         job_instance = client.create_job(jobBody, self.project_id)
-        print("Job Instance with Name {} Created Successfully".format(job_body.name))
+        print("Job with Name {} Created Successfully".format(job_body.name))
 
         return jobInstance
 
@@ -321,19 +321,27 @@ class CMLProjectManager:
         return model_yaml_dict
 
       
-    def create_jobbodies_from_proj_metadata(self, proj_metadata):
+    def reproduce_project_from_metadata(self, proj_metadata):
         """
-        Use project metadata to create job bodies for create job requests.
-        """
-        job_bodies = []
-        for i in range(len(proj_metadata)):
-          print(proj_metadata[i][1]['jobResponse'])
-          jobResponse = proj_metadata[i][1]['jobResponse']
-          job_bodies.append(manager.create_job_body_from_jobresponse(jobResponse))
-
-        return job_bodies
-      
-      
+        Use project metadata to create jobs and models.
+        """ 
+        for response in proj_metadata:
+          
+            if "Model" in response[0]:
+                modelBody = self.create_model_body_from_modelresponse(response[1])
+                self.create_model(modelBody)
+          
+            if "Job" in response[0]:
+                jobBoday = self.create_job_body_from_jobresponse(response[1])
+                self.create_job(jobBody)
+        
+        print("Project Deployment Complete. \n")
+        print("Listing All Current Project Jobs: \n")
+        self.list_jobs()
+        print("Listing All Current Project Models: \n")
+        self.client.list_models()
+        
+        
     def create_model_request(self):
         """
         Create a New CML Model Endpoint.
@@ -349,6 +357,16 @@ class CMLProjectManager:
         )
 
         return modelReq
+
+      
+    def create_model(self, modelBody):
+        try:
+          # Create a model.
+            api_response = api_instance.create_model(body, project_id)
+            pprint(api_response)
+        except ApiException as e:
+            print("Exception when calling CMLServiceApi->create_model: %s\n" % e)
+
 
 
     def create_model_endpoint(self, modelReq):
