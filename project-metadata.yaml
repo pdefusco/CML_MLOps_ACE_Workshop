@@ -1,5 +1,119 @@
+Job_mrug-ddqa-spkc-nlw8:
+    jobResponse:
+        arguments: ''
+        cpu: 4.0
+        created_at: 2023-01-04 20:17:34.566898+00:00
+        creator:
+            email: pauldefusco@cloudera.com
+            name: Paul de Fusco
+            username: pauldefusco
+        engine_image_id: '0'
+        english_schedule: ''
+        environment: ''
+        id: mrug-ddqa-spkc-nlw8
+        kernel: ''
+        kill_on_timeout: false
+        memory: 12.0
+        name: MonitoringJob
+        nvidia_gpu: 0
+        owner: null
+        parent_id: ''
+        paused: false
+        project:
+            default_project_engine: ''
+            name: ''
+            public_identifier: ''
+            slug: ''
+        runtime_addon_identifiers:
+        - hadoop-cli-7.2.11-hf4-j8u342
+        runtime_identifier: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.7-standard:2022.11.1-b2
+        schedule: ''
+        script: 02_APIv2_Pipeline/01_Pipeline_MonitoringJob.py
+        timeout: '0'
+        timezone: America/Los_Angeles
+        type: manual
+        updated_at: 2023-01-04 20:17:34.566966+00:00
+    last_updated_timestamp: 1674673624780.3489
+    requirements: /home/cdsw/requirements.txt
+
+Job_lqxq-dy0t-nymy-qn9z:
+    jobResponse:
+        arguments: ''
+        cpu: 4.0
+        created_at: 2023-01-04 20:17:37.511891+00:00
+        creator:
+            email: pauldefusco@cloudera.com
+            name: Paul de Fusco
+            username: pauldefusco
+        engine_image_id: '0'
+        english_schedule: ''
+        environment: ''
+        id: lqxq-dy0t-nymy-qn9z
+        kernel: python3
+        kill_on_timeout: false
+        memory: 12.0
+        name: DeployModelJob
+        nvidia_gpu: 0
+        owner: null
+        parent_id: iy4m-pu2k-qnz9-rkbh
+        paused: false
+        project:
+            default_project_engine: ''
+            name: ''
+            public_identifier: ''
+            slug: ''
+        runtime_addon_identifiers:
+        - hadoop-cli-7.2.11-hf4-j8u342
+        runtime_identifier: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.7-standard:2022.11.1-b2
+        schedule: ''
+        script: 02_APIv2_Pipeline/03_Pipeline_DeployModelJob.py
+        timeout: '0'
+        timezone: America/Los_Angeles
+        type: dependent
+        updated_at: 2023-01-04 20:17:37.511944+00:00
+    last_updated_timestamp: 1674673624795.752
+    requirements: /home/cdsw/requirements.txt
+
+Job_iy4m-pu2k-qnz9-rkbh:
+    jobResponse:
+        arguments: ''
+        cpu: 2.0
+        created_at: 2023-01-04 20:17:36.207002+00:00
+        creator:
+            email: pauldefusco@cloudera.com
+            name: Paul de Fusco
+            username: pauldefusco
+        engine_image_id: '0'
+        english_schedule: ''
+        environment: '{}'
+        id: iy4m-pu2k-qnz9-rkbh
+        kernel: ''
+        kill_on_timeout: false
+        memory: 4.0
+        name: TrainingJob
+        nvidia_gpu: 0
+        owner: null
+        parent_id: ''
+        paused: false
+        project:
+            default_project_engine: ''
+            name: ''
+            public_identifier: ''
+            slug: ''
+        runtime_addon_identifiers:
+        - hadoop-cli-7.2.11-hf4-j8u342
+        runtime_identifier: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.7-standard:2022.04.1-b6
+        schedule: ''
+        script: 02_APIv2_Pipeline/02_Pipeline_TrainModelJob.py
+        timeout: '0'
+        timezone: America/Los_Angeles
+        type: manual
+        updated_at: 2023-01-04 20:57:12.774845+00:00
+    last_updated_timestamp: 1674673624806.9255
+    requirements: /home/cdsw/requirements.txt
+
 Model_820b209f-a214-4d7c-9ac1-5cff1d3178a6:
-    last_updated_timestamp: 1674605850708.5376
+    last_updated_timestamp: 1674673624842.6462
     modelResponse:
         built_at: 0001-01-01 00:00:00+00:00
         comment: test comment

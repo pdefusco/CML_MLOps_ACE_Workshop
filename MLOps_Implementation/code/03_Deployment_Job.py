@@ -59,7 +59,6 @@ projManager = project_manager.CMLProjectManager()
 modelManager = model_manager.CMLModelManager(base_model_file_path, base_model_script_path, base_model_training_data_path, function_name)
 gitManager = git_manager.GITManager()
 
-
 modelId = modelManager.get_latest_deployment_details_allmodels()["model_id"]
 buildId = modelManager.get_latest_deployment_details_allmodels()["latest_build_id"]
 

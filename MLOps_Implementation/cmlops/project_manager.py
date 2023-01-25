@@ -71,7 +71,6 @@ class CMLProjectManager:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
-
     def __init__(self):
         self.project_id = os.environ["CDSW_PROJECT_ID"]
         self.cml_workspace_url = os.environ["CDSW_DOMAIN"]
@@ -212,7 +211,7 @@ class CMLProjectManager:
             updated_at = modelResponse["updated_at"],
             function_name = modelResponse["function_name"],
             runtime_identifier = modelResponse["runtime_identifier"],
-            runtime_addon_identifiers = modelResponse["runtime_addon_identifiers"]
+            runtime_addon_identifiers = modelResponse["runtime_addon_identifiers"],
             creator_name = modelResponse["creator"]["name"]
         )
         print("Model Body for Model CRN: {}: ".format(crn))
@@ -366,7 +365,6 @@ class CMLProjectManager:
             pprint(api_response)
         except ApiException as e:
             print("Exception when calling CMLServiceApi->create_model: %s\n" % e)
-
 
 
     def create_model_endpoint(self, modelReq):

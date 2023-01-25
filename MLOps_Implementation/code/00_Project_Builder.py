@@ -47,12 +47,17 @@ import logging
 from packaging import version
 from MLOps_Implementation.cmlops import project_manager
 
+# 1. Backup your Pipeline from the previous exercise to your project metadata file:
+
+# Enter your username here:
+username = 'pauldefusco'
+
 projManager = project_manager.CMLProjectManager()
 listJobsResponse = projManager.list_jobs()
 jobResponse = listJobsResponse['jobs'][1]
 pprint(jobResponse)
 
-proj_metadata_yaml_path = '/home/cdsw/project-metadata.yaml'
+proj_metadata_yaml_path = '/home/cdsw/project-metadata-{}.yaml'.format(username)
 
 if os.path.exists(proj_metadata_yaml_path):
   projManager.remove_project_metadata()
@@ -68,10 +73,12 @@ projManager.update_project_metadata(modelBodyYaml)
 proj_metadata = projManager.read_proj_metadata(proj_metadata_yaml_path)
 pprint(proj_metadata)
 
-requestBodies = []
-for response in proj_metadata:
-  print(response[0])
-  if "Model" in response[0]:
-    requestBodies.append(projManager.create_model_body_from_modelresponse(response[1]))
-  if "Job" in response[0]:
-    requestBodies.append(projManager.create_job_body_from_jobresponse(response[1])
+# 2. Manually remove all your jobs and models from this project.
+
+# 3. Reproduce the project with the provided metadata file. 
+
+projManager.reproduce_project_from_metadata()
+
+proj_metadata = projManager.read_proj_metadata(proj_metadata_yaml_path)
+pprint(proj_metadata)
+
