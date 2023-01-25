@@ -126,20 +126,37 @@ class CMLProjectManager:
         return listJobRunsResponse
 
 
-    def list_models(self):
+    def list_latest_model_build(self):
         """
-        List all Project Models (Active or Inactive e.g. in stopped state).
+        List Most Recent Model Build for each Project Model.
+        CML Best Practices dictates having one Production Model per Project, and managing multiple Builds and Deployments within it.
+        The method thus retrieves configurations related to the latest model build for the project model. 
         The representation can be used to easily reproduce model-related project artifacts in other environments.
         Returns a response with an instance of type ListModelsResponse.
         """
-        try:
-            # List models, optionally filtered, sorted, and paginated.
-            listModelsResponse = self.client.list_models(self.project_id).get().to_dict()
-            pprint(listModelsResponse)
-        except ApiException as e:
-            print("Exception when calling CMLServiceApi->list_models: %s\n" % e)
+        # gather model details
+        models = (
+            self.client.list_models(project_id=self.project_id, async_req=True, page_size = 50)
+            .get()
+            .to_dict()
+        )
+        model_info = [
+            model for model in models["models"]
+        ][-1]
 
-        return listModelsResponse
+        modelId = model_info["id"]
+
+        # gather latest build details
+        builds = (
+            self.client.list_model_builds(
+                project_id=self.project_id, model_id=modelId, async_req=True, page_size = 50
+            )
+            .get()
+            .to_dict()
+        )
+        listModelBuildsResponse = builds["model_builds"][-1]  # most recent build
+
+        return listModelBuildsResponse
 
 
     def create_job_body_from_scratch(self, job_name, script, cpu, mem, parent_job, runtimeId, *runtime_addon_ids):
@@ -147,7 +164,6 @@ class CMLProjectManager:
         Create a Job Request Body via APIv2 given an APIv2 client object and Job Details.
         This function only works for models deployed within the current project.
         """
-
         job_body = cmlapi.CreateJobRequest(
             project_id = self.project_id,
             name = job_name,
@@ -183,6 +199,27 @@ class CMLProjectManager:
 
         return jobBody
 
+      
+    def create_model_body_from_modelresponse(self, modelResponse):
+        """
+        Create a Job Body with an instance of Job type as input.
+        This function helps you reproduce a Job from one Project to Another.
+        """
+        modelBody = cmlapi.CreateJobRequest(
+            project_id = self.project_id,
+            crn = modelResponse["crn"],
+            file_path = modelResponse["file_path"],
+            updated_at = modelResponse["updated_at"],
+            function_name = modelResponse["function_name"],
+            runtime_identifier = modelResponse["runtime_identifier"],
+            runtime_addon_identifiers = modelResponse["runtime_addon_identifiers"]
+            creator_name = modelResponse["creator"]["name"]
+        )
+        print("Model Body for Model {}: ".format(modelBody.name))
+        print(modelBody)
+
+        return modelBody
+      
 
     def create_job(self, jobBody):
         """
@@ -256,7 +293,7 @@ class CMLProjectManager:
         """
         Create YAML snippet for a single job based on jobResponse instance
         """
-        jobId = 'Job_'+jobResponse['id']
+        jobId = 'Job_' + jobResponse['id']
         job_yaml_dict = {
           jobId: {
               'jobResponse': jobResponse,
@@ -272,10 +309,10 @@ class CMLProjectManager:
         """
         Create YAML snippet for a single model based on modelResponse instance
         """
-        modelId = 'Model_'+modelResponse['id']
+        modelId = 'Model_' + modelResponse['model_id']
         model_yaml_dict = {
           modelId: {
-              'modelResponse': jobResponse,
+              'modelResponse': modelResponse,
               'requirements': '/home/cdsw/requirements.txt',
               'last_updated_timestamp': time.time() * 1000
             }
@@ -283,19 +320,20 @@ class CMLProjectManager:
 
         return model_yaml_dict
 
+      
     def create_jobbodies_from_proj_metadata(self, proj_metadata):
         """
         Use project metadata to create job bodies for create job requests.
         """
         job_bodies = []
         for i in range(len(proj_metadata)):
-          print(proj_metadata[i][1]['job_body'])
-          jobResponse = proj_metadata[i][1]['job_body']
+          print(proj_metadata[i][1]['jobResponse'])
+          jobResponse = proj_metadata[i][1]['jobResponse']
           job_bodies.append(manager.create_job_body_from_jobresponse(jobResponse))
 
         return job_bodies
-
-
+      
+      
     def create_model_request(self):
         """
         Create a New CML Model Endpoint.

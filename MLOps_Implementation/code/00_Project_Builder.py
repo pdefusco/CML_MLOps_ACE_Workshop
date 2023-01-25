@@ -61,9 +61,17 @@ for jobResponse in range(len(listJobsResponse['jobs'])):
   jobBodyYaml = projManager.create_job_yaml(listJobsResponse['jobs'][jobResponse])
   projManager.update_project_metadata(jobBodyYaml)
   
-ListModelResponse = projManager.list_models()
+listModelBuildsResponse = projManager.list_latest_model_build()
+modelBodyYaml = projManager.create_model_yaml(listModelBuildsResponse)
+projManager.update_project_metadata(modelBodyYaml)
 
 proj_metadata = projManager.read_proj_metadata(proj_metadata_yaml_path)
 pprint(proj_metadata)
 
-#jobBody = manager.create_job_body_from_jobresponse(proj_metadata[0])
+requestBodies = []
+for response in proj_metadata:
+  print(response[0])
+  if "Model" in response[0]:
+    requestBodies.append(projManager.create_model_body_from_modelresponse(response[1]))
+  if "Job" in response[0]:
+    requestBodies.append(projManager.create_job_body_from_jobresponse(response[1])

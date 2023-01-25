@@ -1,0 +1,25 @@
+Model_820b209f-a214-4d7c-9ac1-5cff1d3178a6:
+    last_updated_timestamp: 1674605850708.5376
+    modelResponse:
+        built_at: 0001-01-01 00:00:00+00:00
+        comment: test comment
+        created_at: 2023-01-04 20:58:12.949291+00:00
+        creator:
+            email: pauldefusco@cloudera.com
+            name: Paul de Fusco
+            username: pauldefusco
+        crn: crn:cdp:ml:us-west-1:8a1e15cd-04c2-48aa-8f35-b4a8c11997d3:workspace:23c14c37-0b0c-419e-bb5a-e4be3efa4e4a/99bcef77-746b-4cd2-9514-f52dcb13de6e
+        deletion_status: ''
+        engine_image: ''
+        file_path: 01_ML_Project_Basics/6_B_CustomerEndpoint.py
+        function_name: predict
+        id: 99bcef77-746b-4cd2-9514-f52dcb13de6e
+        kernel: Python 3.7
+        model_id: 820b209f-a214-4d7c-9ac1-5cff1d3178a6
+        runtime_addon_identifiers:
+        - hadoop-cli-7.2.11-hf4-j8u342
+        runtime_identifier: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.7-standard:2022.11.1-b2
+        status: built
+        updated_at: 2023-01-04 20:59:15.547485+00:00
+    requirements: /home/cdsw/requirements.txt
+

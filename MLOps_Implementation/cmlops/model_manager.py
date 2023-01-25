@@ -69,7 +69,6 @@ class CMLModelManager:
         client (cmlapi.api.cml_service_api.CMLServiceApi)
     """
 
-
     def __init__(self, base_model_file_path, base_model_script_path, base_model_training_data_path, function_name):
         self.client = cmlapi.default_client()
         self.base_model_file_path = base_model_file_path
@@ -85,8 +84,6 @@ class CMLModelManager:
         Given a APIv2 client object and Model Name, use APIv2 to retrieve details about the latest/current deployment.
         This function only works for models deployed within the current project.
         """
-
-        # gather model details
         models = (
             self.client.list_models(project_id=self.project_id, async_req=True)
             .get()
@@ -142,8 +139,6 @@ class CMLModelManager:
         Given a APIv2 client object and Model Name, use APIv2 to retrieve details about the latest/current deployment.
         This function only works for models deployed within the current project.
         """
-
-        # gather model details
         models = (
             self.client.list_models(project_id=self.project_id, async_req=True, page_size = 50)
             .get()
@@ -199,7 +194,6 @@ class CMLModelManager:
         Use CML APIv2 to identify and return the latest version of a Python 3.7,
         Standard, Workbench Runtime
         """
-
         try:
             runtime_criteria = {
                 "kernel": "Python 3.7",
@@ -227,7 +221,6 @@ class CMLModelManager:
         Use CML APIv2 to collect all model details required to analyze model metrics
         This function only works for models deployed within the current project.
         """
-
         Model_AccessKey = self.get_latest_deployment_details_allmodels()["model_access_key"]
         Deployment_CRN = self.get_latest_deployment_details_allmodels()["latest_deployment_crn"]
         Model_CRN = self.get_latest_deployment_details_allmodels()["model_crn"]
@@ -246,7 +239,6 @@ class CMLModelManager:
         Use CML APIv2 to collect all model metrics provided CML Model endpoint details,
         This function only works for models deployed within the current project.
         """
-
         model_metrics = cdsw.read_metrics(
             model_crn=Model_CRN, model_deployment_crn=Deployment_CRN
         )
@@ -277,7 +269,6 @@ class CMLModelManager:
         Parse metrics_df outputting X, y, formatted for model training
         This function only works for models deployed within the current project.
         """
-
         y = metrics_df['metrics.final_label'].dropna()
         y = y.astype("int")
         X = metrics_df.filter(like="input_data").dropna().drop(columns=['metrics.input_data.conversion'])
@@ -291,7 +282,6 @@ class CMLModelManager:
         Load the latest model version in the project.
         This function only works for models deployed within the current project.
         """
-
         models_list = os.listdir(model_dir)
         models_dates_list = [model_path.replace(".sav","") for model_path in models_list if "final" in model_path]
         model_dates = [int(i.split('_')[2]) for i in models_dates_list]
@@ -308,7 +298,6 @@ class CMLModelManager:
         Store the latest model version in the project.
         This function only works for models deployed within the current project.
         """
-
         now = time.time()
         filename = model_dir + "/final_model_{}.sav".format(round(now))
 
@@ -322,7 +311,6 @@ class CMLModelManager:
         Load the latest model version in the project.
         This function only works for models deployed within the current project.
         """
-
         loaded_model = load_latest_model_version()
         loaded_model.fit(X, y)
         store_latest_model_version(loaded_model)
@@ -334,8 +322,6 @@ class CMLModelManager:
         """
         Determine if Model Performance is below expectations
         """
-
-        # Do some conversions & calculations on the raw metrics
         metrics_df["startTimeStampMs"] = pd.to_datetime(
             metrics_df["startTimeStampMs"], unit="ms"
         )
