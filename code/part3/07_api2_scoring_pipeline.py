@@ -37,8 +37,6 @@
 # #  Author(s): Paul de Fusco
 #***************************************************************************/
 
-!pip3 install -r requirements.txt
-
 import os
 from cmlapi.utils import Cursor
 import string

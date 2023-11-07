@@ -41,11 +41,14 @@ import os
 import numpy as np
 import pandas as pd
 from datetime import datetime
+from pyspark.sql import SparkSession
+from pyspark.context import SparkContext
 from pyspark.sql.types import LongType, IntegerType, StringType, FloatType
 from pyspark.sql import functions as F
 import dbldatagen as dg
 import dbldatagen.distributions as dist
 from dbldatagen import FakerTextFactory, DataGenerator, fakerText
+
 
 class UnlabeledTextGen:
 
@@ -57,7 +60,7 @@ class UnlabeledTextGen:
     def dataGen(self, shuffle_partitions_requested = 8, partitions_requested = 8, data_rows = 1000):
 
         # setup use of Faker
-        FakerTextUS = FakerTextFactory(locale=['en_US'], providers=[bank])
+        FakerTextUS = FakerTextFactory(locale=['en_US'])
 
         # partition parameters etc.
         self.spark.conf.set("spark.sql.shuffle.partitions", shuffle_partitions_requested)
@@ -78,8 +81,8 @@ import cml.data_v1 as cmldata
 
 # Sample in-code customization of spark configurations
 #from pyspark import SparkContext
-#SparkContext.setSystemProperty('spark.executor.cores', '1')
-#SparkContext.setSystemProperty('spark.executor.memory', '2g')
+SparkContext.setSystemProperty('spark.executor.cores', '2')
+SparkContext.setSystemProperty('spark.executor.memory', '4g')
 
 CONNECTION_NAME = "go01-aw-dl"
 conn = cmldata.get_connection(CONNECTION_NAME)
@@ -102,8 +105,15 @@ logged_model = '/home/cdsw/.experiments/8aul-mgvw-shwq-6a2k/dh37-xfvn-dvca-jo9s/
 # Load model as a Spark UDF.
 loaded_model = mlflow.pyfunc.spark_udf(spark, model_uri=logged_model)
 
+column_names = ["text", "id"]
+#column_names = F.struct(df.columns)
+
 # Predict on a Spark DataFrame.
-df.withColumn('label', loaded_model(*column_names)).collect()
+#df.withColumn('label', loaded_model(column_names)).collect()
+
+#df = df.withColumn('pred', loaded_model(F.struct("text")))
+df = df.withColumn('label', loaded_model(*column_names))
+df.show()
 
 ##---------------------------------------------------
 ##                 STORE BATCH AS TEMP TABLE

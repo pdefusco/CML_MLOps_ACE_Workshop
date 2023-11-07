@@ -41,11 +41,14 @@ import os
 import numpy as np
 import pandas as pd
 from datetime import datetime
+from pyspark.sql import SparkSession
+from pyspark.context import SparkContext
 from pyspark.sql.types import LongType, IntegerType, StringType, FloatType
 from pyspark.sql import functions as F
 import dbldatagen as dg
 import dbldatagen.distributions as dist
 from dbldatagen import FakerTextFactory, DataGenerator, fakerText
+
 
 class LabeledTextGen:
 
@@ -83,8 +86,8 @@ import cml.data_v1 as cmldata
 
 # Sample in-code customization of spark configurations
 #from pyspark import SparkContext
-#SparkContext.setSystemProperty('spark.executor.cores', '1')
-#SparkContext.setSystemProperty('spark.executor.memory', '2g')
+SparkContext.setSystemProperty('spark.executor.cores', '2')
+SparkContext.setSystemProperty('spark.executor.memory', '4g')
 
 CONNECTION_NAME = "go01-aw-dl"
 conn = cmldata.get_connection(CONNECTION_NAME)
