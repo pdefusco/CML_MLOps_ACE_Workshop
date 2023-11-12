@@ -1,4 +1,4 @@
-# CDE 1.19 ACE Hands-On-Lab Workshop
+# CML MLOps Hands-On-Lab Workshop
 
 ## About the Hands On Lab Workshops
 
@@ -29,20 +29,14 @@ This Hands On Lab is designed to walk you through the Services's main capabiliti
 
 ## Step by Step Instructions
 
-Detailed instructions are provided in the [step_by_step_guides](https://github.com/pdefusco/CDE119_ACE_WORKSHOP/blob/main/step_by_step_guides/) folder.
+Detailed instructions are provided in the [step_by_step_guides](https://github.com/pdefusco/CML_MLOps_ACE_HOL/tree/main/step_by_step_guides/english) folder.
 
-* [Link to the English Guide](https://github.com/pdefusco/CDE119_ACE_WORKSHOP/blob/main/step_by_step_guides/english).
-
-## Hands On Lab Workshops for Prior Versions of CDE
-
-This GitHub repository pertains to CDE version 1.19 which introduced some important changes with respect to prior versions.
-
-If you don't have access to a CDE 1.19 Virtual Cluster we recommend the prior version of the HOL which covers all versions up until 1.18 and is available [at this GitHub repository](https://github.com/pdefusco/CDE_Tour_ACE_HOL).
+* [Link to the English Guide](https://github.com/pdefusco/CML_MLOps_ACE_HOL/tree/main/step_by_step_guides/english).
 
 ## Other CDP Hands On Lab Workshops
 
 CDP Data Services include Cloudera Machine Learning (CML), Cloudera Operational Database (COD), Cloudera Data Flow (CDF) and Cloudera Data Warehouse (CDW). HOL Workshops are available for each of these CDP Data Services.
 
-* [CML Workshop](https://github.com/cloudera/CML_AMP_Churn_Prediction): Prototype and deploy a Churn Prediction classifier, apply an explainability model to it and deploy a Flask Application to share insights with your project stakeholders. This project uses SciKit-Lean, PySpark, and Local Interpretable Model-agnostic Explanations (LIME).
-* [CDF Workshop](https://github.com/cloudera-labs/edge2ai-workshop): Build a full OT to IT workflow for an IoT Predictive Maintenance use case with: Edge Flow Management with MQTT and Minifi for data collection; Data Flow management was handled by NiFi and Kafka, and Spark Streaming with Cloudera Data Science Workbench (CDSW) model to process data. The lab also includes content focused on Kudu, Impala and Hue.
-* [CDW Workshop](https://github.com/pdefusco/cdw-workshop): As a Big Data Engineer and Analyst for an Aeronautics corporation, build a Data Warehouse & Data Lakehouse to gain an advantage over your competition. Interacticely explore data at scale. Create ongoing reports. Finally move to real-time analysis to anticipate engine failures. All using Apache Impala and Iceberg.
+* [CDE Workshop](https://github.com/pdefusco/CDE119_ACE_WORKSHOP#cde-119-ace-hands-on-lab-workshop): Deploy an Ingestion, Transformation and Reporting pipeline with Spark 3.2. Learn about Iceberg's most popular features and orchestrate pipelines with Airflow. Use the CDE CLI and CDE Spark Submit Migration Tool to interact with CDE Virtual Clusters from your terminal.Finally, build a Python App leveraging the CDE API and monitor multiple CDE Virtual Clusters at the same time.
+* [CDF Workshop](https://github.com/cloudera-labs/edge2ai-workshop): Build a full OT to IT workflow for an IoT Predictive Maintenance use case with: Edge Flow Management with MQTT and MiNiFi for data collection; Data Flow management was handled by NiFi and Kafka, and Spark Streaming with Cloudera Data Science Workbench (CDSW) model to process data. The lab also includes content focused on Kudu, Impala and Hue.
+* [CDW Workshop](https://github.com/pdefusco/cdw-workshop): As a Big Data Engineer and Analyst for an Aeronautics corporation, build a Data Warehouse & Data Lakehouse to gain an advantage over your competition. Interactively explore data at scale. Create ongoing reports. Finally move to real-time analysis to anticipate engine failures. All using Apache Impala and Iceberg.
