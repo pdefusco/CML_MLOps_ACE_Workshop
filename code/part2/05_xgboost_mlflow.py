@@ -50,7 +50,14 @@ import mlflow.sklearn
 import logging
 from xgboost import XGBClassifier
 
-mlflow.set_experiment(experiment_name="heart-clf")
+from datetime import date
+
+username = os.environ["PROJECT_OWNER"]
+date = date.today()
+
+experimentName = "xgboost-clf-{0}-{1}".format(username, date)
+
+mlflow.set_experiment(experimentName)
 
 df = pd.read_csv("data/heart.csv")
        
@@ -78,9 +85,23 @@ with mlflow.start_run():
     mlflow.log_param("accuracy", accuracy)
     mlflow.log_param("recall", recall)
     mlflow.xgboost.log_model(model, artifact_path="artifacts")#, registered_model_name="my_xgboost_model"
-        
+
+def getLatestExperimentInfo(experimentName):
+  """
+  Method to capture the latest Experiment Id and Run ID for the provided experimentName
+  """  
+  experimentId = mlflow.get_experiment_by_name(experimentName).experiment_id
+  runsDf = mlflow.search_runs(experimentId, run_view_type=1)
+  experimentId = runsDf.iloc[-1]['experiment_id']
+  experimentRunId = runsDf.iloc[-1]['run_id']
+  
+  return experimentId, experimentRunId
+
+experimentId, experimentRunId = getLatestExperimentInfo(experimentName)
+
+
 #Replace Experiment Run ID here:
-run = mlflow.get_run("9m9m-mrhb-t7h1-i0v2")
+run = mlflow.get_run(experimentRunId)
 
 pd.DataFrame(data=[run.data.params], index=["Value"]).T
                  

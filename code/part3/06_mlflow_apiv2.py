@@ -42,12 +42,18 @@ import cmlapi
 from cmlapi.rest import ApiException
 from pprint import pprint
 import json, secrets, os, time
+from datetime import datetime
+import random
+
 
 client = cmlapi.default_client()
 
 client.list_projects()
 
 project_id = os.environ['CDSW_PROJECT_ID']
+username = os.environ["PROJECT_OWNER"]
+
+## DEPLOY A MODEL THAT HAS ALREADY BEEN REGISTERED VIA MLFLOW LOGGING ROUTINE
 
 # List Registered Models at Workspace Level
 
@@ -75,7 +81,7 @@ except ApiException as e:
 
 try:
     # Lists all experiments that belong to a user across all projects.
-    search_filter = {"name":"xgboost-classifier"}
+    search_filter = {"name":"xgboost-clf-{}".format(username)}
     search = json.dumps(search_filter)
     api_response = client.list_all_experiments(search_filter=search)
     pprint(api_response)
@@ -84,7 +90,7 @@ except ApiException as e:
 
 try:
     # Lists all experiments that belong to a user across all projects.
-    search_filter = {"name":"heart-clf"}
+    search_filter = {"name":"pytorch-clf-{}".format(username)}
     search = json.dumps(search_filter)
     api_response = client.list_all_experiments(search_filter=search)
     pprint(api_response)
@@ -96,7 +102,7 @@ except ApiException as e:
 
 try:
     # Return all projects, optionally filtered, sorted, and paginated.
-    search_filter = {"owner.username" : "pauldefusco"}
+    search_filter = {"owner.username" : username}
     search = json.dumps(search_filter)
     api_response = client.list_projects(search_filter=search)
     pprint(api_response)
@@ -111,8 +117,8 @@ try:
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling CMLServiceApi->list_experiments: %s\n" % e)
-
-experiment_id = "3bmr-ju29-om6c-5aeo" # str | Experiment ID to search over.
+    
+experiment_id = api_response.to_dict()["experiments"][0]['id'] # str | Experiment ID to search over.
 #search_filter = 'search_filter_example' # str | Search filter is an optional HTTP parameter to filter results by. Supported search filter keys are: [creator.email creator.name creator.username name status]. Dynamic search key words are supported for experiment runs. Supported fields are [metrics tags params]. (optional)
 page_size = 40 # int | Page size is an optional argument for number of entries to return in one page. If not specified, the server will determine a page size. If specified, must be respecified for further requests when using the provided next page token in the response. (optional)
 
@@ -122,12 +128,32 @@ try:
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling CMLServiceApi->list_experiment_runs: %s\n" % e)
-####
+
+## Register a Model from an Experiment
+## This provides an Entry in the MLFlow Model Registry
+# Retrieve the experiment Run ID from the output of the previous command and enter it below:
+
+api_response.experiment_runs[0].id
 
 session_id = secrets.token_hex(nbytes=4)
-username = "pauldefusco"
+run_id = api_response.experiment_runs[0].id
 model_name = 'wine_model_' + username + "-" + session_id
-print(model_name)    
+
+CreateRegisteredModelRequest = {
+                                "project_id": project_id, 
+                                "experiment_id" : experiment_id,
+                                "run_id": run_id, 
+                                "model_name": model_name, 
+                                "model_path": "artifacts"
+                               }
+
+try:
+    # Register a model.
+    api_response = client.create_registered_model(CreateRegisteredModelRequest)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling CMLServiceApi->create_registered_model: %s\n" % e)
+    
 ## LIST REGISTERED MODELS
 
 # Allow for model registration to complete before continuing
@@ -141,106 +167,22 @@ try:
 except ApiException as e:
     print("Exception when calling CMLServiceApi->list_registered_models: %s\n" % e)
 
-# List all models:
-    
-search_filter = "{\"creator.username\":\"pauldefusco\"}" # str | Search filter is an optional HTTP parameter to filter results by. Supported search filter keys are: [auth_enabled creator.email creator.name creator.username description name]. For example:   search_filter={\"name\":\"foo\",\"auth_enabled\":\"f\"}. (optional)
-sort = 'created_at' # str | Sort is an optional HTTP parameter to sort results by. Supported sort keys are: [auth_enabled created_at creator.email creator.name creator.username description name updated_at]. where \"+\" means sort by ascending order, and \"-\" means sort by descending order. For example:   sort=created_at. (optional)
-
-try:
-    # List models, optionally filtered, sorted, and paginated.
-    api_response = client.list_models(project_id, search_filter=search_filter, sort=sort)
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling CMLServiceApi->list_models: %s\n" % e)   
-    
-# This is the model ID from the registry which can be obtained via list registered models
-model_id = 'f1tr-4tim-5zvf-kw5d'    
-    
-## Create a Model from the Registry
+model_id = api_response.models[-1].model_id
+      
   
-CreateModelRequest = {
-                        "project_id": project_id, 
-                        "name" : model_name,
-                        "description": "My CLF from Registry", 
-                        "registered_model_id": model_id
-                     }
+# current date and time
+now = datetime.now()
+timestamp = datetime.timestamp(now)
+
+##### CREATE DEV PROJ
+
+createProjRequest = {"name": "mlops_dev_prj", "template":"git", "git_url":"https://github.com/pdefusco/MLOps_CML_DEV_Proj.git"}
 
 try:
-    # Create a model.
-    api_response = client.create_model(CreateModelRequest, project_id)
+    # Create a new project
+    api_response = client.create_project(createProjRequest)
     pprint(api_response)
 except ApiException as e:
-    print("Exception when calling CMLServiceApi->create_model: %s\n" % e)
-
-# OBTAIN thia from ID field of prior request:
-long_model_id = "68c43930-2a39-4688-a9c8-98eeaaa5ee18"
-    
-# Verify that the model was created
-
-try:
-    # List models, optionally filtered, sorted, and paginated.
-    api_response = client.list_models(project_id, sort=sort, page_size=page_size)
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling CMLServiceApi->list_models: %s\n" % e)   
-    
-try:
-    # Get a registered model.
-    api_response = client.get_registered_model(model_id=model_id) #Use model id from registered models not long model if
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling CMLServiceApi->get_registered_model: %s\n" % e)
-
-# Obtain model_version_id from output of previous request:
-    
-model_version_id = "85u3-5bg6-1aew-ku7u"
-
-# Create Model Build
-
-CreateModelBuildRequest = {
-                            "registered_model_version_id": model_version_id, 
-                            "runtime_identifier": "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.9-standard:2023.08.2-b8",
-                            "comment": "invoking model build",
-                            "model_id": long_model_id
-                          }
-
-try:
-    # Create a model build.
-    api_response = client.create_model_build(CreateModelBuildRequest, project_id, long_model_id)
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling CMLServiceApi->create_model_build: %s\n" % e)
-
-    
-# str | Sort is an optional HTTP parameter to sort results by. Supported sort keys are: [built_at comment created_at creator.email creator.name creator.username crn status updated_at]. where \"+\" means sort by ascending order, and \"-\" means sort by descending order. For example:   sort=creator.email. (optional)
-sort = "built_at"
-
-try:
-    # List model builds, optionally filtered, sorted, and paginated.
-    api_response = client.list_model_builds(project_id, long_model_id, sort=sort)
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling CMLServiceApi->list_model_builds: %s\n" % e)
-
-# Obtain Build ID from prior request
-# Apply long model id in model id field
-
-# create an instance of the API class
-build_id = "1dc01955-d5b8-4a2c-b8e5-1e20452e4b33" # str | ID of the model build to deploy.
-
-CreateModelDeploymentRequest = {
-  "cpu":"2",
-  "memory":"4"
-}
-
-try:
-    # Create a model deployment.
-    api_response = client.create_model_deployment(CreateModelDeploymentRequest, project_id, long_model_id, build_id)
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling CMLServiceApi->create_model_deployment: %s\n" % e)
-
-#REMEMBER TO MAKE SURE ALL NUMBERS ARE FLOATS
-model_request = {"dataframe_split": {"columns":["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"],"data":[[6.2, 0.66, 0.48, 1.2, 0.029, 29.1, 75.1, 0.98, 3.33, 0.39, 12.8]]}}
-
-
+    print("Exception when calling CMLServiceApi->create_project: %s\n" % e)  
+  
+  
