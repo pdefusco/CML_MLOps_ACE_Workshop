@@ -64,7 +64,7 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     np.random.seed(40)
 
-    mlflow.set_experiment("second-wine-clf-{0}-{1}".format(username, date))
+    mlflow.set_experiment("my-wine-clf-{0}-{1}".format(username, date))
 
     # Read the wine-quality csv file from the URL
     csv_url = (
@@ -108,5 +108,5 @@ if __name__ == "__main__":
         mlflow.log_metric("rmse", rmse)
         mlflow.log_metric("r2", r2)
         mlflow.log_metric("mae", mae)
-        #mlflow.sklearn.log_model(lr, artifact_path="artifacts")
-        mlflow.sklearn.log_model(lr, artifact_path="artifacts", registered_model_name="second-wine-clf-{0}-{1}".format(username,date))
+        mlflow.sklearn.log_model(lr, artifact_path="artifacts")
+        #mlflow.sklearn.log_model(lr, artifact_path="artifacts", registered_model_name="my-wine-clf-{0}-{1}".format(username,date))
